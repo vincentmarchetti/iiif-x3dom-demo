@@ -1,7 +1,7 @@
 {
-  "name": "iiif-threejs-demo",
+  "name": "iiif-x3dom-demo",
   "version": "1.0.0",
-  "description": "Demo experiment of IIIF 3D content using Three.js",
+  "description": "Demo experiment of IIIF 3D content using X3DOM",
   "source": "index.html",
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "build": "parcel build"
   },
   "dependencies": {
-    "manifesto.js": "JulieWinchester/manifesto#3dtsg-dev-dist",
+    "manifesto.js": "vincentmarchetti/manifesto#3dtsg-main",
     "three": "^0.161.0"
   },
   "keywords": [
