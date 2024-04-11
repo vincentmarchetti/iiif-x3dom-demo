@@ -158,7 +158,7 @@ function loadModel(modelAnnotation) {
       }
 
       // Position model within target scene if position selector present
-      if (typeof modelTarget !== "string") {
+      if ( modelTarget.isSpecificResource ) {
         const selector = modelTarget.getSelector();
         if (selector && selector.isPointSelector) {
           const position = selector.getLocation();
