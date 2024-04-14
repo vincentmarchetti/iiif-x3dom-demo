@@ -9,7 +9,7 @@
     "build": "parcel build"
   },
   "dependencies": {
-    "manifesto.js": "IIIF-Commons/manifesto#draft3dapi",
+    "manifesto.js": "vincentmarchetti/manifesto#3dtsg-main",
     "three": "^0.161.0"
   },
   "keywords": [
