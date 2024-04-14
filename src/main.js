@@ -24,8 +24,7 @@ const manifesto = require("manifesto.js/dist-commonjs/");
 */
 function getRequestedManifestOptions(){
     var retVal = {
-        'defaultLabel' : "N/A",
-        'locale'       : "de"
+        'locale'       : "en"
     }
     return retVal;
 }
