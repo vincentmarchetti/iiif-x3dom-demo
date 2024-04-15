@@ -2,13 +2,156 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Title</title>
+    <title>IIIF 3D Manifest Viewer -- X3DOM</title>
+    
+    <script type='text/javascript' src='https://x3dom.org/release/x3dom-full.js'> </script>         
+    <script type='text/javascript' src='./src/manifest_viewer.js'> </script>
+
+    <link rel='stylesheet' type='text/css' href='https://x3dom.org/release/x3dom.css'></link> 
     <link href="src/styles.css" rel="stylesheet" />
   </head>
   <body>
-    <div id="canvas-container">
-      <div id="canvas"></div>
-    </div>
+
+
+<!-- 
+1 row 2 column table with
+col 0 x3dom canvas and div for text of manifest label
+col 1 UI for x3dom:
+- show/axes
+- headlight on/off
+ -->
+<table>
+	<tr> 
+	<td>
+	
+<div class="canvas-width canvas-height" style="margin-top:1em;">
+<x3d id="x3delem" class="canvas-width canvas-height"> 
+<scene>
+<navigationinfo id="navigationinfo-node" headlight='true'></navigationinfo>
+
+<background id="x3d-background" skyColor="0.8 0.8 0.8"> </background>
+
+<!-- 
+Adding a zero-intensity light. Otherwise X3DOM tries to be helpful
+and puts in a default ambient light. The intention here is to only
+have a headlight or lights added in a IIIF manifest
+ -->
+<pointlight ambientIntensity="0.0" intensity="0"  global='true'> </pointlight>
+
+
+<viewpoint position="0 0 10" orientation="0 0 1 0" 
+ centerOfRotation="0 0 0" ></viewpoint>
+ <transform id="annotation_container" scale="1 1 1">
+
+</transform>
+<switch id="triad-switch-node" whichChoice="0">
+<group DEF="triad">
+            <shape>
+                <lineSet vertexCount='2'>
+                    <coordinate point='0 0 0 1 0 0'/>                   
+                </lineSet>
+                <appearance>			
+                    <material emissiveColor='1 0 0'/>
+                    <lineProperties linewidthScaleFactor='2'>
+                        <!--linetype='1'  solid-->
+                    </lineProperties>
+                </appearance>
+                    
+            </shape>
+            <Shape>
+                <LineSet vertexCount='2'>
+                    <Coordinate point='0 0 0 0 1 0'/>                   
+                </LineSet>
+                <Appearance>			
+                    <Material emissiveColor='0 1 0'/>
+                    <LineProperties linewidthScaleFactor='2'>
+                        <!--linetype='1'  solid-->
+                    </LineProperties>
+                </Appearance>
+                    
+            </Shape>
+            <Shape>
+                <LineSet vertexCount='2'>
+                    <Coordinate point='0 0 0 0 0 1'/>                   
+                </LineSet>
+                <Appearance>			
+                    <Material emissiveColor='0 0 1'/>
+                    <LineProperties linewidthScaleFactor='2'>
+                        <!--linetype='1'  solid-->
+                    </LineProperties>
+                </Appearance>
+                    
+            </Shape>
+        </group>
+</switch>
+
+<!-- 
+The following white ball could be added to the scene to check
+lighting effects
+ -->
+    <switch id="white-sphere" whichChoice="0">
+        <transform translation = "0 -0.7 0">
+        <shape>
+        <sphere radius="0.25""></sphere>
+        <appearance>
+            <material emissiveColor="0 0 0" diffuseColor="1 1 1"></material>
+        </appearance>
+        </shape>
+        </transform>
+    </switch>
+    
+</scene>
+</x3d> 
+</div>
+
+<div class="canvas-width" id="manifest_label_container"> </div>	
+	
+	</td>	
+
+	<td style="padding-left:2em; vertical-align:top;">
+	<div>
+	Key Press Commands<br>
+	<span style="font-style:italic; font-size:10pt">Click scene to set focus (green border)</span><br>
+	a : Show All<br>
+	r : Reset View<br>
+	</div>	
+	
+	<div style="margin-top:2em">
+	<div>
+	<input  type="checkbox"  id="show-axes-checkbox" />
+	<span style="margin-left:0em">Show Coordinate Axes</span>
+	</div>
+	
+	<div id="axes-description" style="line-height:1.2em; visibility:visible;">
+	    Axes markers are 1 global unit in length.<br>
+	    Red   X axis<br>
+	    Green Y axis<br>
+	    Blue  Z axis<br>
+	</div>
+	
+	<div style="margin-top:2em">
+	<div>
+	<input  type="checkbox"  id="headlight-on-checkbox" />
+	<span style="margin-left:0em">Headlight</span>
+	</div>
+	
+	<div id="headlight-description" style="line-height:1.2em; visibility:visible;">
+	    Headlight is  default lighting available in X3D viewer.
+	</div>
+	</div>
+	</div>
+	</td> 
+</tr>
+</table>
+
+<!-- end 1 row 2 colomn table for X3DOM elements -->
+
+
+<!-- 
+Form UI for choosing manifest from drop down
+or loading from text input
+based on https://github.com/JulieWinchester/iiif-threejs-demo
+ -->
     <div id="form">
       <select name="manifest" id="manifest-select">
         <optgroup label="1. Basic Model in Scene">
@@ -36,6 +179,8 @@
       <textarea id="manifest-text" name="manifest-text" rows="10"></textarea>
       <button id="load-manifest-from-text">Load Manifest From Text</button>
     </div>
+<!-- End form UI for choosing manifest -->
+
     <script type="module" src="src/listeners.js"></script>
   </body>
 </html>
