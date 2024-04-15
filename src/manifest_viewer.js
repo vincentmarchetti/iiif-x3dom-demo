@@ -36,9 +36,8 @@ initialize_viewer = function () {
     manifestViewer = {
         triad_switch_node : document.getElementById("triad-switch-node"),
         axes_description  : document.getElementById("axes-description"),
-        setAxesVisible( value ){
-            // value is a boolean
-            console.log("set isAxesVisible to " + value);
+        
+        set AxesVisible( value ){ // value a boolean
             var newChoice = (value)? 0 : -1;
             this.triad_switch_node.setAttribute("whichChoice", newChoice );
             this.axes_description.style.display =(value)?"block":"none";
@@ -46,9 +45,7 @@ initialize_viewer = function () {
         
         navigationinfo_node   : document.getElementById("navigationinfo-node"),
         headlight_description : document.getElementById("headlight-description"),
-        setHeadlightOn( value ){
-            // value is a boolean
-            console.log("setHeadlightOn to " + value);
+        set HeadlightOn( value ){ // value is a boolean
             var newBool = (value)?"true":"false";
             this.navigationinfo_node.setAttribute("headlight", newBool);
             this.headlight_description.style.display =(value)?"block":"none";
@@ -59,13 +56,13 @@ initialize_viewer = function () {
     show_axes_checkbox.checked = true;
     show_axes_checkbox.addEventListener("click", (event) => 
     {
-        manifestViewer.setAxesVisible(  show_axes_checkbox?.checked);
+        manifestViewer.AxesVisible = show_axes_checkbox?.checked ;
     });
     
     let headlight_on_checkbox = document.getElementById("headlight-on-checkbox");
     headlight_on_checkbox.checked = true;
     headlight_on_checkbox.addEventListener("click", (event) => 
     {
-        manifestViewer.setHeadlightOn(  headlight_on_checkbox?.checked);
+        manifestViewer.HeadlightOn = headlight_on_checkbox?.checked;
     });
 };
