@@ -6,17 +6,20 @@
   "type": "module",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build",
+    "test" : "mocha"
   },
   "dependencies": {
     "manifesto.js": "vincentmarchetti/manifesto#3dtsg-main",
-    "three": "^0.161.0"
+    "threejs-math": "^0.147"
   },
   "keywords": [
     "typescript",
     "javascript"
   ],
   "devDependencies": {
-    "parcel": "^2.12.0"
+    "parcel": "^2.12.0",
+    "mocha": "^10.2.0",
+    "chai" : "^5"
   }
 }

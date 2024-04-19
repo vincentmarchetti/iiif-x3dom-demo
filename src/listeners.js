@@ -6,7 +6,8 @@ document
   .addEventListener("click", async () => {
     const manifestUrl = document.querySelector("input#manifest-url").value;
     var manifest = await fetchManifestFromUrl(manifestUrl);
-    console.log("fetchManifestFromUrl result label " + manifest.getLabel() )
+    fireNewManifestEvent( manifest );
+    //console.log("fetchManifestFromUrl result label " + manifest.getLabel() )
   });
 
 document
@@ -14,7 +15,8 @@ document
   .addEventListener("click",  () => {
     const manifestText = document.querySelector("textarea#manifest-text").value;
     var manifest = getManifestFromText(manifestText);
-    console.log("getManifestFromText result label " + manifest.getLabel().getValue() )
+    fireNewManifestEvent( manifest );
+    //console.log("getManifestFromText result label " + manifest.getLabel().getValue() )
   });
 
 document
@@ -23,5 +25,21 @@ document
     const manifestUrl = event.target.value;
     document.querySelector("input#manifest-url").value = manifestUrl;
     var manifest = await fetchManifestFromUrl(manifestUrl);
-    console.log("select then fetchManifestFromUrl result label " + manifest.getLabel().getValue("en") )
+    fireNewManifestEvent( manifest );
+    //console.log("select then fetchManifestFromUrl result label " + manifest.getLabel().getValue() )
   });
+
+document.addEventListener("viewer_ready", async (event) => {
+    console.log("viewer_ready event fired" );
+    const manifestUrl = document.querySelector("select#manifest-select").value;
+    document.querySelector("input#manifest-url").value = manifestUrl;
+    var manifest = await fetchManifestFromUrl(manifestUrl);
+    fireNewManifestEvent( manifest );
+  });
+  
+  
+function fireNewManifestEvent( newManifest ){
+    console.log("firing new_manifest");
+    var toFire = new CustomEvent("new_manifest", { detail : {manifest : newManifest }});
+    document.dispatchEvent( toFire );
+}
