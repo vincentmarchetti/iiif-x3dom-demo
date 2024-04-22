@@ -96,6 +96,13 @@ initialize_viewer = function () {
     	        
     	        var annotations = scene.getContent();
     	        console.log(`prepare to render ${annotations.length} annotations`);
+    	        
+    	        let ann = new SceneAnnotations(scene);
+    	        
+    	        for (let model of ann.models){
+    	            console.log(`adding ${model.label} to scene`);
+    	            manifestViewer.annotation_container.appendChild(model.x3dnode);
+    	        }
             }
         }
         
@@ -133,12 +140,16 @@ class SceneAnnotations {
         this.scene = scene;
         // create and retain  the array of all annotations
         this.annotations = scene.getContent();
+        let that = this;
+        this.annotations.forEach( (item) => {that.addAnnotation(item);} );
     }
     
     /*
     the entry point for adding a general annotation (model, camera, or light)
     to the appropriate list data-member of this instanceof
     Has no return value
+    
+    will put an object with members label and x3dnode on the appropriate list
     
     anno is an instance of the Annotation class as defined in manifesto.js module
     */
@@ -154,18 +165,94 @@ class SceneAnnotations {
                             {base:target.getSource(), wrapper: target}:
                             {base:target            , wrapper: null};
         
-
+        var label = anno.getLabel()?.getValue();
+        let that = this;
+        /*
         var addHandler = ( (base) => {
-            if (base.isLight) return this.addLight;
-            if (base.isModel) return this.addModel;
+            if (base.isLight) return that.addLight;
+            if (base.isModel) return that.addModel;
             throw new Error("unidentified body base resource");
         })( bodyObj.base );
-        
-        addHandler(bodyObj, targetObj);        
+        */
+        this.addModel(bodyObj, targetObj, label);        
     }
     
-    addModel( bodyObj, targetObj ){
+    /*
+    Handle case where the annotation is a model represented in
+    the X3D secengraph by a Inline X3D node, enclosed in X3D Transform
+    nodes for proper placement
+    */
+    addModel( bodyObj, targetObj , label=null){
+        
+        label  = label ?? `model ${this.models.length + 1}`;
     
+        var inlineNode = document.createElement('inline');
+        inlineNode.setAttribute('url', bodyObj.base.id);
+        
+        // x3dtransform will be list of X3D Transform nodes need to
+        // perform the function of iiif transforms in the SpecificResource
+        // of the body and the PointSelector of the target resources
+        var x3dtransforms = [];
+        
+        if ( bodyObj.wrapper &&
+             bodyObj.wrapper.isSpecificResource &&
+             bodyObj.wrapper.transform){
+             // rem: bodyObj.wrapper.transform is a array of IIIF transform resources
+             x3dtransforms.concat(bodyObj.wrapper.transform.map( this.IIIFTransformToX3DTransform));
+        }
+        
+        if (targetObj.wrapper?.isSpecificResource &&
+            targetObj.wrapper.getSelector()?.isPointSelector ){
+            var selector = targetObj.wrapper.getSelector();
+            x3dtransforms.concat( this.IIIFPointSelectorTOX3dTransform(selector));
+        }
+        
+        if ( x3dtransforms.length > 0){
+            x3dtransforms[0].appendChild(inlineNode);
+            for ( var i = 1; i < x3dtransforms.length; ++i)
+                x3dtransforms[i].appendChild( x3dtransforms[i-1]);
+            this.models.push( {label : label , x3dnode : x3dtransforms.at(-1)});
+        }
+        else
+            this.models.push( {label : label , x3dnode : inlineNode});
+        
+        
+                          
+    }
+    
+    /*
+    * @param iiiftranform : instance of manifesto.Transform class
+    * returns: The equivalent X3D node in the form of a DOMElement with tag "transform"
+    */
+    IIIFTransformToX3DTransform( iiiftrans ){
+        var retVal = document.createElement('transform');
+         if (iiiftrans.isTranslateTransform ){
+	        var tdata = iiiftrans.getTranslation();
+	        retVal.setAttribute("translation", `${tdata.x} ${tdata.y} ${tdata.z}`);
+        }
+        else if (iiiftrans.isScaleTransform ){
+            var sdata = iiiftrans.getScale();
+            retVal.setAttribute( "scale",`${sdata.x} ${sdata.y} ${sdata.z}`);
+        }
+        else if (iiiftrans.isRotateTransform ){
+            var quat = mathx3d.quaternionFromRotateTransform(iiiftrans);
+            [polar, angle ] = mathx3d.axisAngleFromQuaternion(quat);
+            retval.setAttribute('rotation',
+                                `${polar.x} ${polar.y} ${polar.z} ${angle}`);
+        }
+        else{
+            console.log("error: unknown transform type");
+        }
+        return retVal;
+    }
+    
+    IIIFPointSelectorTOX3dTransform( selector ){
+        var retVal = document.createElement('transform');
+        if (selector.isPointSelector){
+            var loc = selector.getLocation();
+		    retVal.setAttribute("translation", `${loc.x} ${loc.y} ${loc.z}`);
+        }
+        return retVal;
     }
 }
 
