@@ -35,7 +35,7 @@ quaternionFromRotateTransform( transform ){
         }
     }
     
-    // at this time we throw exception if more than one component is non-zero
+    // at the current 3D API (4/20/2024) throw exception if more than one component is non-zero
     if (nonzeroCount > 1)
         throw new Error("quaternionFromRotateTransform : invalid transform");
         
