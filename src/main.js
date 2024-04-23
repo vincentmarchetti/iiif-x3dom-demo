@@ -52,7 +52,7 @@ export async function fetchManifestFromUrl(manifestUrl) {
     console.log("manifest parsed into Manifesto object");
     // prepare the pretty text
     // reference https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
-    var prettyText = JSON.stringify( manifestObj, undefined, 4);
+    var prettyText = JSON.stringify( manifestObj, undefined, 2);
     document.querySelector("textarea#manifest-text").value = prettyText;
 
     return retVal;

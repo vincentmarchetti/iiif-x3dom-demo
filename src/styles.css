@@ -15,22 +15,12 @@ body {
             div {margin-top:1em;}
             #manifest_label_container { margin-top:1em ; font-size:18pt; text-align:center; }
 
-/* 
-#canvas-container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
 
-#canvas {
-  width: 500px;
-  height: 400px;
-}
 
 #form {
   display: flex;
   flex-direction: column;
-  width: 500px;
+  width: 640px;
 }
 
 #form select {
@@ -48,7 +38,9 @@ body {
 }
 
 #form textarea {
+  font-size : small;
+  font-family : monospace;
   flex: 1;
   margin: 5px 0;
 }
- */
+

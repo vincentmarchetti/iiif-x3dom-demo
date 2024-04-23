@@ -14,7 +14,7 @@ let _pre_init_state = {
 
 
 x3dom.runtime.ready = function(element) {
-    console.log("x3dom.ready fired");
+    //console.log("x3dom.ready fired");
     _pre_init_state.x3dom = true;
     if ( _pre_init_state.x3dom && _pre_init_state.document ){
         initialize_viewer();
@@ -22,7 +22,7 @@ x3dom.runtime.ready = function(element) {
 };
 
 window.addEventListener("load" , (event) => {
-    console.log("document load fired");
+    //console.log("document load fired");
     _pre_init_state.document = true;
     if ( _pre_init_state.x3dom && _pre_init_state.document ) initialize_viewer();
 });
@@ -31,7 +31,7 @@ let manifestViewer = null;
 
 
 initialize_viewer = function () {
-    console.log("initialize_viewer called");
+    //console.log("initialize_viewer called");
     
     manifestViewer = {
         triad_switch_node : document.getElementById("triad-switch-node"),
@@ -55,7 +55,7 @@ initialize_viewer = function () {
         
         
         background_node : document.getElementById("x3d-background"),
-        defaultBackgroundColor : { red:128, green:128, blue:128},
+        defaultBackgroundColor : { red:204, green:204, blue:204},
         
         /*
             colorObject has properties red, greem, blue, each in integer
@@ -71,7 +71,7 @@ initialize_viewer = function () {
     	        Math.max(0.0,Math.min(1.0, colorObject.green/255)),
     	        Math.max(0.0,Math.min(1.0, colorObject.blue/255)),
     	    ].join(" ");
-    	    console.log("setting color to " + rgbString);
+    	    //console.log("setting color to " + rgbString);
     	    this.background_node.setAttribute("skyColor", rgbString);
         },
         
@@ -82,11 +82,10 @@ initialize_viewer = function () {
         },
         
         handleNewManifest( event ){
-            console.log('in handleNewManifest ' + Object.keys( event ));
-            console.log('more in handleNewManifest ' + Object.keys( event.detail ));
+            
             if (event?.detail?.manifest){
                 var manifest = event?.detail?.manifest;
-                console.log("call to handleNewManifest " + manifest.getLabel().getValue());
+                
                 
                 manifestViewer.clearAnnotationContent();
                 
@@ -95,7 +94,7 @@ initialize_viewer = function () {
     	        manifestViewer.BackgroundColor = scene.getBackgroundColor() ?? manifestViewer.defaultBackgroundColor;
     	        
     	        var annotations = scene.getContent();
-    	        console.log(`prepare to render ${annotations.length} annotations`);
+    	        
     	        
     	        let ann = new SceneAnnotations(scene);
     	        
@@ -103,6 +102,7 @@ initialize_viewer = function () {
     	            console.log(`adding ${model.label} to scene`);
     	            manifestViewer.annotation_container.appendChild(model.x3dnode);
     	        }
+    	        //console.log( manifestViewer.annotation_container.innerHTML);
             }
         }
         
@@ -154,16 +154,18 @@ class SceneAnnotations {
     anno is an instance of the Annotation class as defined in manifesto.js module
     */
     addAnnotation( anno ){    
-        var body   = anno.getBody()[0];
-        var target = anno.getTarget();
+        const body   = anno.getBody()[0];
+        const target = anno.getTarget();
         
-        var bodyObj =   (body.isSpecificResource)?
+        let bodyObj =   (body.isSpecificResource)?
                             {base:body.getSource(), wrapper:body}:
                             {base:body            , wrapper:null};
                             
-        var targetObj = (target.isSpecificResource)?
+        let targetObj = (target.isSpecificResource)?
                             {base:target.getSource(), wrapper: target}:
                             {base:target            , wrapper: null};
+                            
+        
         
         var label = anno.getLabel()?.getValue();
         let that = this;
@@ -186,7 +188,7 @@ class SceneAnnotations {
         
         label  = label ?? `model ${this.models.length + 1}`;
     
-        var inlineNode = document.createElement('inline');
+        let inlineNode = document.createElement('inline');
         inlineNode.setAttribute('url', bodyObj.base.id);
         
         // x3dtransform will be list of X3D Transform nodes need to
@@ -194,17 +196,16 @@ class SceneAnnotations {
         // of the body and the PointSelector of the target resources
         var x3dtransforms = [];
         
-        if ( bodyObj.wrapper &&
-             bodyObj.wrapper.isSpecificResource &&
-             bodyObj.wrapper.transform){
-             // rem: bodyObj.wrapper.transform is a array of IIIF transform resources
-             x3dtransforms.concat(bodyObj.wrapper.transform.map( this.IIIFTransformToX3DTransform));
+        if ( bodyObj.wrapper?.isSpecificResource ){
+             var transforms = x3dtransforms.concat(bodyObj.wrapper.getTransform());
+             let x3dt = transforms.map( this.IIIFTransformToX3DTransform );             
+             x3dtransforms = x3dtransforms.concat(x3dt);             
         }
         
         if (targetObj.wrapper?.isSpecificResource &&
             targetObj.wrapper.getSelector()?.isPointSelector ){
             var selector = targetObj.wrapper.getSelector();
-            x3dtransforms.concat( this.IIIFPointSelectorTOX3dTransform(selector));
+            x3dtransforms =  x3dtransforms.concat( this.IIIFPointSelectorToX3dTransform(selector));
         }
         
         if ( x3dtransforms.length > 0){
@@ -246,7 +247,7 @@ class SceneAnnotations {
         return retVal;
     }
     
-    IIIFPointSelectorTOX3dTransform( selector ){
+    IIIFPointSelectorToX3dTransform( selector ){
         var retVal = document.createElement('transform');
         if (selector.isPointSelector){
             var loc = selector.getLocation();
