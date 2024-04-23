@@ -1,19 +1,22 @@
 body {
   font-family: sans-serif;
-
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-            body {font-size:12pt; margin-left:2em; margin-right:2em;margin-top:1em; line-height:1.5em;}
-            
-            .canvas-width {width:512px;}
-            .canvas-height {height:512px; }
-            x3d { border:0px solid black; }
-            :focus { border:2px solid green; }
-            div {margin-top:1em;}
-            #manifest_label_container { margin-top:1em ; font-size:18pt; text-align:center; }
+body {font-size:12pt; 
+      margin-top:1em; 
+      line-height:1.5em;}
+
+.canvas-width  {width:512px;}
+.canvas-height {height:512px; }
+x3d { border:0px solid black; }
+:focus { border:2px solid green; }
+div {margin-top:1em;}
+#manifest_label_container { margin-top:1em ; 
+                            font-size:18pt; 
+                            text-align:center; }
 
 
 

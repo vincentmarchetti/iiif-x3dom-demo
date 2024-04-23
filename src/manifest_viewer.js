@@ -52,7 +52,26 @@ initialize_viewer = function () {
         },
         
         
-        
+        default_viewpoint : document.getElementById("default-viewpoint"),
+        default_viewpoint_values : {
+            "position" : null,
+            "orientation" : null,
+            "centerOfRotation" : null
+        },
+        storeDefaultViewpoint(){
+            for (key of Object.keys( manifestViewer.default_viewpoint_values)){
+                manifestViewer.default_viewpoint_values[key] = 
+                    manifestViewer.default_viewpoint.getAttribute(key);
+            }
+            console.log("default viewpoint " + JSON.stringify(manifestViewer.default_viewpoint_values));
+        },
+        restoreDefaultViewpoint(){
+            for (key of Object.keys( manifestViewer.default_viewpoint_values)){
+                let val = manifestViewer.default_viewpoint_values[key];
+                if ( val != null )
+                    manifestViewer.default_viewpoint.setAttribute(key, val);
+            }
+        },
         
         background_node : document.getElementById("x3d-background"),
         defaultBackgroundColor : { red:204, green:204, blue:204},
@@ -88,6 +107,7 @@ initialize_viewer = function () {
                 
                 
                 manifestViewer.clearAnnotationContent();
+                manifestViewer.restoreDefaultViewpoint();
                 
                 var scene = manifest.getSequences()[0].getScenes()[0];
     	        
@@ -110,6 +130,8 @@ initialize_viewer = function () {
         
 
     };
+    
+    manifestViewer.storeDefaultViewpoint();
     
     let show_axes_checkbox = document.getElementById("show-axes-checkbox");
     show_axes_checkbox.checked = true;
@@ -168,15 +190,15 @@ class SceneAnnotations {
         
         
         var label = anno.getLabel()?.getValue();
-        let that = this;
-        /*
-        var addHandler = ( (base) => {
-            if (base.isLight) return that.addLight;
-            if (base.isModel) return that.addModel;
+        //let that = this;
+        
+        let addHandler = ( (base) => {
+            if (base.isLight) return this.addLight.bind(this);
+            if (base.isModel) return this.addModel.bind(this);
             throw new Error("unidentified body base resource");
         })( bodyObj.base );
-        */
-        this.addModel(bodyObj, targetObj, label);        
+        
+        addHandler(bodyObj, targetObj, label);        
     }
     
     /*
