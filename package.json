@@ -18,8 +18,8 @@
     "javascript"
   ],
   "devDependencies": {
-    "parcel": "^2.12.0",
+    "chai": "^5",
     "mocha": "^10.2.0",
-    "chai" : "^5"
+    "parcel": "^2.12.0"
   }
 }
