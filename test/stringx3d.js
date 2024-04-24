@@ -9,7 +9,7 @@ describe('stringx3d functions', function() {
         const test_rgb = {red:0 , green:153, blue:255 };
         const exact_result = "0.000 0.600 1.000";
         
-        const test_result = stringx3d.colorFromRGB( test_rgb );
+        const test_result = stringx3d.makeSFColor( test_rgb );
         expect( test_result ).to.equal( exact_result );
     });
 });

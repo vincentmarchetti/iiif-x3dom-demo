@@ -2,11 +2,12 @@ body {
   font-family: sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
 }
 
 body {font-size:12pt; 
       margin-top:1em; 
+      margin-left:1em;
       line-height:1.5em;}
 
 .canvas-width  {width:512px;}
@@ -23,7 +24,7 @@ div {margin-top:1em;}
 #form {
   display: flex;
   flex-direction: column;
-  width: 640px;
+  width: 840px;
 }
 
 #form select {
@@ -47,5 +48,5 @@ div {margin-top:1em;}
   margin: 5px 0;
 }
 
-option .modified { font-color:blue; }
+option .modified { color:blue; }
 

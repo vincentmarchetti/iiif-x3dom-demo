@@ -1,5 +1,6 @@
 import { Vector3,  Quaternion } from "threejs-math";
 import {mathx3d}                from "./mathx3d.js";
+import {stringx3d}                from "./stringx3d.js";
 /* 
 script level: define structure and event handlers to determine when
 both the window load event has been fired and the x3dom ready event
@@ -77,21 +78,13 @@ initialize_viewer = function () {
         defaultBackgroundColor : { red:204, green:204, blue:204},
         
         /*
-            colorObject has properties red, greem, blue, each in integer
+            rgb has properties red, greem, blue, each in integer
             in range [0, 256)
             
             side effect of setting the X3D scene background color
         */
-        set BackgroundColor( colorObject ){
-            // result of following: rgbString a string of 3 float numbers delimited by spaces
-            // each  number in range [0.0,1.0]
-            var rgbString = [
-    	        Math.max(0.0,Math.min(1.0, colorObject.red/255)),
-    	        Math.max(0.0,Math.min(1.0, colorObject.green/255)),
-    	        Math.max(0.0,Math.min(1.0, colorObject.blue/255)),
-    	    ].join(" ");
-    	    //console.log("setting color to " + rgbString);
-    	    this.background_node.setAttribute("skyColor", rgbString);
+        set BackgroundColor( rgb ){                        
+    	    this.background_node.setAttribute("skyColor", stringx3d.makeSFColor(rgb));
         },
         
         annotation_container : document.getElementById("annotation_container"),
@@ -254,6 +247,16 @@ class SceneAnnotations {
 
         let light_direction = new Vector3(0.0,-1.0,0.0);
         
+        if (bodyObj.wrapper?.isSpecificResource){
+            let transform = bodyObj.wrapper.getTransform();
+            if (transform){
+                // assume transform is entirely RotateTransform instances
+                let quat = mathx3d.quaternionFromRotateTransformArray( transform);
+                light_direction.applyQuaternion( quat );
+                console.log("light direction " + stringx3d.makeSFVec3f(light_direction));
+            }
+        }
+        
         if (iiifLight.isAmbientLight){
             lightNode = document.createElement('pointlight');
             lightNode.setAttribute("intensity", "0.0");
@@ -262,20 +265,17 @@ class SceneAnnotations {
         else{
             if (iiifLight.isDirectionalLight){
                 lightNode = document.createElement('directionallight');
-                lightNode.setAttribute("direction", "0 -1 0");                
+                                
             }  
             else{
-                console.log("unknown light " + source.getType());
-            }   
-            lightNode.setAttribute("intensity", source.getIntensity().toString() );  
+                console.log("unknown light " + iiifLight.getType());
+            } 
+            lightNode.setAttribute("direction", stringx3d.makeSFVec3f(light_direction));  
+            lightNode.setAttribute("intensity", iiifLight.getIntensity().toString() );  
             lightNode.setAttribute("ambientIntensity", "0.0" ); 
         }
         var light_color = iiifLight.getColor();
-        var rgbAttr = [
-            Math.max(0.0,Math.min(1.0, light_color.red/255)),
-            Math.max(0.0,Math.min(1.0, light_color.green/255)),
-            Math.max(0.0,Math.min(1.0, light_color.blue/255)),
-        ].join(" ");
+        var rgbAttr = stringx3d.makeSFColor( light_color );
         lightNode.setAttribute("color", rgbAttr);
         lightNode.setAttribute("global", "true");       
 
@@ -290,18 +290,16 @@ class SceneAnnotations {
         var retVal = document.createElement('transform');
          if (iiiftrans.isTranslateTransform ){
 	        var tdata = iiiftrans.getTranslation();
-	        retVal.setAttribute("translation", `${tdata.x} ${tdata.y} ${tdata.z}`);
+	        retVal.setAttribute("translation", stringx3d.makeSFVec3f( tdata ));
         }
         else if (iiiftrans.isScaleTransform ){
             var sdata = iiiftrans.getScale();
-            retVal.setAttribute( "scale",`${sdata.x} ${sdata.y} ${sdata.z}`);
+            retVal.setAttribute( "scale",stringx3d.makeSFVec3f( sdata ));
         }
         else if (iiiftrans.isRotateTransform ){
             var quat = mathx3d.quaternionFromRotateTransform(iiiftrans);
             let axis_angle = mathx3d.axisAngleFromQuaternion(quat);
-            //console.log("result " + [polar, angle ]);
-            retVal.setAttribute('rotation',
-                                `${axis_angle.axis.x} ${axis_angle.axis.y} ${axis_angle.axis.z} ${axis_angle.angle}`);
+            retVal.setAttribute('rotation', stringx3d.makeSFRotation( axis_angle ));
         }
         else{
             console.log("error: unknown transform type");
@@ -312,8 +310,8 @@ class SceneAnnotations {
     IIIFPointSelectorToX3dTransform( selector ){
         var retVal = document.createElement('transform');
         if (selector.isPointSelector){
-            var loc = selector.getLocation();
-		    retVal.setAttribute("translation", `${loc.x} ${loc.y} ${loc.z}`);
+            let loc = selector.getLocation();
+		    retVal.setAttribute("translation", stringx3d.makeSFVec3f( loc ));
         }
         return retVal;
     }
