@@ -1,4 +1,4 @@
-
+import { Vector3,  Quaternion } from "threejs-math";
 
 /* 
 script level: define structure and event handlers to determine when
@@ -122,6 +122,11 @@ initialize_viewer = function () {
     	            console.log(`adding ${model.label} to scene`);
     	            manifestViewer.annotation_container.appendChild(model.x3dnode);
     	        }
+    	        
+                for (let light of ann.lights){
+    	            console.log(`adding ${light.label} to scene`);
+    	            manifestViewer.annotation_container.appendChild(light.x3dnode);
+    	        }
     	        //console.log( manifestViewer.annotation_container.innerHTML);
             }
         }
@@ -238,9 +243,43 @@ class SceneAnnotations {
         }
         else
             this.models.push( {label : label , x3dnode : inlineNode});
+    }
+    
+    addLight( bodyObj, targetObj, label = null){
+    
+        label  = label ?? `light ${this.models.length + 1}`;
         
+        let lightNode = null;
+        let iiifLight = bodyObj.base;
+
+        let light_direction = new Vector3(0.0,-1.0,0.0);
         
-                          
+        if (iiifLight.isAmbientLight){
+            lightNode = document.createElement('pointlight');
+            lightNode.setAttribute("intensity", "0.0");
+            lightNode.setAttribute("ambientIntensity", iiifLight.getIntensity().toString() );                    
+        }
+        else{
+            if (iiifLight.isDirectionalLight){
+                lightNode = document.createElement('directionallight');
+                lightNode.setAttribute("direction", "0 -1 0");                
+            }  
+            else{
+                console.log("unknown light " + source.getType());
+            }   
+            lightNode.setAttribute("intensity", source.getIntensity().toString() );  
+            lightNode.setAttribute("ambientIntensity", "0.0" ); 
+        }
+        var light_color = iiifLight.getColor();
+        var rgbAttr = [
+            Math.max(0.0,Math.min(1.0, light_color.red/255)),
+            Math.max(0.0,Math.min(1.0, light_color.green/255)),
+            Math.max(0.0,Math.min(1.0, light_color.blue/255)),
+        ].join(" ");
+        lightNode.setAttribute("color", rgbAttr);
+        lightNode.setAttribute("global", "true");       
+
+        this.lights.push( {label : label , x3dnode : lightNode});
     }
     
     /*
