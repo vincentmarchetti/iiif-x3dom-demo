@@ -23,7 +23,11 @@ export const mathx3d = {
     Returns a Quaternion instance
 */
 quaternionFromRotateTransform( transform ){
-    var degrees = [transform.x,transform.y,transform.z].map( ( v ) => {return (v)?Number(v):0;} );
+    if (! transform.isRotateTransform )
+        throw new Error("invalid transform to quaternionFromRotateTransform");
+        
+    let rdata = transform.getRotation();
+    var degrees = [rdata.x,rdata.y,rdata.z];
     
     // determine how many components are non-zero, and which is the last non-zero component
     var nonzeroCount = 0;
@@ -79,7 +83,7 @@ axisAngleFromQuaternion( quat ){
     var vlen = vec.length();
     var angle = 2.0 * Math.atan2( vlen, quat.w);
     
-    if (angle == 0.0) return [ new Vector3(1.0,0.0,0.0) , 0.0 ];
-    else return [ vec.divideScalar( vlen ), angle] 
+    if (angle == 0.0) return { axis : new Vector3(1.0,0.0,0.0) , angle:0.0 };
+    else return { axis : vec.divideScalar( vlen ), angle : angle };
 }
 }

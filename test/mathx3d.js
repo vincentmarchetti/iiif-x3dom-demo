@@ -11,6 +11,12 @@ const x_axis = new Vector3(1.0,0.0,0.0);
 const y_axis = new Vector3(0.0,1.0,0.0);
 const z_axis = new Vector3(0.0,0.0,1.0);
 
+class MockRotateTransform {
+    constructor( x,y,z ){
+        this.isRotateTransform = true;
+        this.getRotation = () => {return {x : x, y : y, z : z} };
+    }
+}
 
 describe('mathx3d rotation functions', function() {
 
@@ -25,13 +31,13 @@ describe('mathx3d rotation functions', function() {
         var test_angle = 45.0;
         var polar_axis = test_axis.clone().multiplyScalar(test_angle);
         
-        var test_transform = {x:polar_axis.x, y:polar_axis.y}
+        var test_transform = new MockRotateTransform( polar_axis.x, polar_axis.y, polar_axis.z);
         var Q = mathx3d.quaternionFromRotateTransform(test_transform);
         
-        var [axis, angle] = mathx3d.axisAngleFromQuaternion(Q);
+        let result = mathx3d.axisAngleFromQuaternion(Q);
         
-        var axis_error = test_axis.clone().sub(axis).length();
-        var angle_error = Math.abs( test_angle - MathUtils.radToDeg(angle));
+        var axis_error = test_axis.clone().sub(result.axis).length();
+        var angle_error = Math.abs( test_angle - MathUtils.radToDeg(result.angle));
         expect(axis_error).to.be.below(1.0e-8);
         expect(angle_error).to.be.below(1.0e-8);
     });
@@ -43,7 +49,7 @@ describe('mathx3d rotation functions', function() {
     transformation.
     */
     it('test application of a rotation', function(){
-        let test_tranform = {isRotateTransform:true , x:+90.0 };
+        let test_tranform = new MockRotateTransform( 90.0, 0.0, 0.0);
         let quat = mathx3d.quaternionFromRotateTransform(test_tranform);
         
         let test_result = y_axis.clone().applyQuaternion(quat);
@@ -67,12 +73,12 @@ describe('mathx3d rotation functions', function() {
     */
     it('test sequence of rotations', function() {
         let test_array = [
-            {isRotateTransform:true , x:+90.0 },
-            {isRotateTransform:true , y:+90.0 },
-            {isRotateTransform:true , x:-90.0 }
+            new MockRotateTransform(  90.0,  0.0, 0.0),
+            new MockRotateTransform(   0.0, 90.0, 0.0),
+            new MockRotateTransform( -90.0,  0.0, 0.0)
         ];
         let exact_result = mathx3d.quaternionFromRotateTransform(
-            {isRotateTransform:true, z:-90.0 });
+            new MockRotateTransform( 0.0,  0.0, -90.0));
         
         let test_result = mathx3d.quaternionFromRotateTransformArray( test_array );
         
@@ -84,8 +90,8 @@ describe('mathx3d rotation functions', function() {
         */
         
         let diff_quat = test_result.clone().multiply( exact_result.clone().invert() );
-        var [axis, angle] = mathx3d.axisAngleFromQuaternion(diff_quat);
-        expect( Math.abs(angle)).to.be.below(1.0e-8);
+        let result = mathx3d.axisAngleFromQuaternion(diff_quat);
+        expect( Math.abs(result.angle)).to.be.below(1.0e-8);
         
     });
 });

@@ -1,5 +1,5 @@
 import { Vector3,  Quaternion } from "threejs-math";
-
+import {mathx3d}                from "./mathx3d.js";
 /* 
 script level: define structure and event handlers to determine when
 both the window load event has been fired and the x3dom ready event
@@ -127,7 +127,7 @@ initialize_viewer = function () {
     	            console.log(`adding ${light.label} to scene`);
     	            manifestViewer.annotation_container.appendChild(light.x3dnode);
     	        }
-    	        //console.log( manifestViewer.annotation_container.innerHTML);
+    	        console.log( manifestViewer.annotation_container.innerHTML);
             }
         }
         
@@ -298,9 +298,10 @@ class SceneAnnotations {
         }
         else if (iiiftrans.isRotateTransform ){
             var quat = mathx3d.quaternionFromRotateTransform(iiiftrans);
-            [polar, angle ] = mathx3d.axisAngleFromQuaternion(quat);
-            retval.setAttribute('rotation',
-                                `${polar.x} ${polar.y} ${polar.z} ${angle}`);
+            let axis_angle = mathx3d.axisAngleFromQuaternion(quat);
+            //console.log("result " + [polar, angle ]);
+            retVal.setAttribute('rotation',
+                                `${axis_angle.axis.x} ${axis_angle.axis.y} ${axis_angle.axis.z} ${axis_angle.angle}`);
         }
         else{
             console.log("error: unknown transform type");
