@@ -48,6 +48,30 @@ quaternionFromRotateTransform( transform ){
 },
 
 /*
+array elements are manifesto RotateTransform instances, or a mockup which
+must have a true value for a "isRotateTransform" property and
+must have x,y,z numeric properties. At this revision the limit that only
+one of the x,y,z components can be non-zero is enforced.
+
+Note that quaternion multiplication in not-commutative. The choice of the
+premultiply function to combine rotations supports the IIIF convention as to
+the interpretation of arrays of RotateTranforms:
+element 0 is applied to a Vector
+then element 1 is applied to the result... 
+*/
+quaternionFromRotateTransformArray( transformArray ){
+    let accum = new Quaternion();
+    transformArray.forEach( ( transform ) => {
+        if (!transform.isRotateTransform )
+            throw new Error("invalid transform to quaternionFromRotateTransformArray");
+        let nquat = mathx3d.quaternionFromRotateTransform( transform );
+        //console.log("this " + Object.keys(this));
+        accum.premultiply( nquat );
+    });
+    return accum;
+},
+
+/*
 returns 2, array of a Vector3 axis and angle of rotation in radians
 */
 axisAngleFromQuaternion( quat ){
