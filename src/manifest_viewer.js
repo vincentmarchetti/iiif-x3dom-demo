@@ -1,6 +1,8 @@
 import { Vector3,  Quaternion } from "threejs-math";
 import {mathx3d}                from "./mathx3d.js";
 import {stringx3d}                from "./stringx3d.js";
+import { Vector3, MathUtils , Euler, Quaternion } from "threejs-math";
+const manifesto = require("manifesto.js/dist-commonjs/");
 /* 
 script level: define structure and event handlers to determine when
 both the window load event has been fired and the x3dom ready event
@@ -190,9 +192,11 @@ class SceneAnnotations {
         var label = anno.getLabel()?.getValue();
         //let that = this;
         
+        console.log("isModel? " + bodyObj.base.isModel);
         let addHandler = ( (base) => {
             if (base.isLight) return this.addLight.bind(this);
             if (base.isModel) return this.addModel.bind(this);
+            if (base.isCamera) return this.addCamera.bind(this);
             throw new Error("unidentified body base resource");
         })( bodyObj.base );
         
@@ -207,7 +211,7 @@ class SceneAnnotations {
     addModel( bodyObj, targetObj , label=null){
         
         label  = label ?? `model ${this.models.length + 1}`;
-    
+        console.log("enter addModel with " + label);
         let inlineNode = document.createElement('inline');
         inlineNode.setAttribute('url', bodyObj.base.id);
         
@@ -241,7 +245,7 @@ class SceneAnnotations {
     addLight( bodyObj, targetObj, label = null){
     
         label  = label ?? `light ${this.models.length + 1}`;
-        
+        console.log("enter addLight with " + label);
         let lightNode = null;
         let iiifLight = bodyObj.base;
 
@@ -281,7 +285,64 @@ class SceneAnnotations {
 
         this.lights.push( {label : label , x3dnode : lightNode});
     }
+    /*
+    * this is an alpha implementation and it will work by modifying
+    * the existing Viewpoint node in the model. As such, it only makes
+    * sense if there is just one camera annotation
+    *
+    * that one viewpoint is manifestViewer.default_viewpoint 
+    * later work will need to develop the UI for switching between 
+    * multiple cameras.
+    *
+    */
+    addCamera( bodyObj, targetObj, label = null){
     
+        label  = label ?? `camera ${this.cameras.length + 1}`;
+        console.log("enter addCamera with " + label);
+        
+        let camera = bodyObj.base; // just convenient alias
+        
+        /* determine a camera orientation from two possible ways
+        * first, the existence of a non-empty transform array in the
+        * specific resource
+        */
+        var transformArray = bodyObj.wrapper?.getTransform();
+        if ( transformArray && transformArray.length > 0 ){
+            throw new Error("Camera orientation determined by transform is not implemented");
+        }
+        
+        // lookedAtAnno is an annotation that the camera is "looking at"
+        let lookedAtAnno = this.scene.getAnnotationById( 
+                            camera.LookAt?.id );
+        if ( lookedAtAnno ){
+            console.log("camera is looking at " + lookedAtAnno.id );
+        }
+        else{
+            console.log("cannot determine where camera is looking!");
+        }
+        
+        let atPoint = lookedAtAnno.LookAtLocation;
+        
+        let fromPoint = (targetObj.wrapper?.getSelector()?.isPointSelector)?
+                        targetObj.wrapper.getSelector().getLocation():
+                        new threejs_math.Vector3(0.0,0.0,0.0);
+                        
+        // warning: direction not normalized to unitlength
+        let direction = atPoint.clone().sub(fromPoint);
+        console.log("look direction" + [direction.x, direction.y, direction.z].join(" "));
+        let euler = manifesto.cameraRelativeRotation( direction );
+        let quat = new Quaternion().setFromEuler( euler );
+        let axisAngle = mathx3d.axisAngleFromQuaternion(quat);
+        let attrSFRotation = stringx3d.makeSFRotation(axisAngle);
+        console.log("evaluated SFRotation " + attrSFRotation);
+        
+        let viewpoint = manifestViewer.default_viewpoint;
+        viewpoint.setAttribute("orientation", attrSFRotation);
+        viewpoint.setAttribute("position", stringx3d.makeSFVec3f(fromPoint));
+        viewpoint.setAttribute("centerOfRotation", stringx3d.makeSFVec3f(atPoint));
+        viewpoint.setAttribute("fieldOfView", MathUtils.degToRad( camera.FieldOfView) );
+        console.log( viewpoint.outerHTML);
+    }
     /*
     * @param iiiftranform : instance of manifesto.Transform class
     * returns: The equivalent X3D node in the form of a DOMElement with tag "transform"
@@ -298,7 +359,7 @@ class SceneAnnotations {
         }
         else if (iiiftrans.isRotateTransform ){
             var quat = mathx3d.quaternionFromRotateTransform(iiiftrans);
-            let axis_angle = mathx3d.axisAngleFromQuaternion(quat);
+            let axis_angle = MathUtils.axisAngleFromQuaternion(quat);
             retVal.setAttribute('rotation', stringx3d.makeSFRotation( axis_angle ));
         }
         else{
