@@ -47,44 +47,7 @@ have a headlight or lights added in a IIIF manifest
 
 </transform>
 <switch id="triad-switch-node" whichChoice="0">
-<group DEF="triad">
-            <shape>
-                <lineSet vertexCount='2'>
-                    <coordinate point='0 0 0 1 0 0'/>                   
-                </lineSet>
-                <appearance>			
-                    <material emissiveColor='1 0 0'/>
-                    <lineProperties linewidthScaleFactor='2'>
-                        <!--linetype='1'  solid-->
-                    </lineProperties>
-                </appearance>
-                    
-            </shape>
-            <Shape>
-                <LineSet vertexCount='2'>
-                    <Coordinate point='0 0 0 0 1 0'/>                   
-                </LineSet>
-                <Appearance>			
-                    <Material emissiveColor='0 1 0'/>
-                    <LineProperties linewidthScaleFactor='2'>
-                        <!--linetype='1'  solid-->
-                    </LineProperties>
-                </Appearance>
-                    
-            </Shape>
-            <Shape>
-                <LineSet vertexCount='2'>
-                    <Coordinate point='0 0 0 0 0 1'/>                   
-                </LineSet>
-                <Appearance>			
-                    <Material emissiveColor='0 0 1'/>
-                    <LineProperties linewidthScaleFactor='2'>
-                        <!--linetype='1'  solid-->
-                    </LineProperties>
-                </Appearance>
-                    
-            </Shape>
-        </group>
+<inline url='"https://spri-open-resources.s3.us-east-2.amazonaws.com/iiif3dtsg/manifesto_viewer/CoordinateAxes.x3d"'></inline>
 </switch>
 
 <!-- 
@@ -129,6 +92,9 @@ lighting effects
 	    Red   X axis<br>
 	    Green Y axis<br>
 	    Blue  Z axis<br>
+	    
+	<div style="font-style:italic; font-size:smaller;"><a href="https://www.web3d.org/x3d/content/examples/X3dForWebAuthors/Chapter03Grouping/CoordinateAxesIndex.html" target="_blank">CoordinateAxes</a> marker courtesy of <a href="https://web3d.org" target="_blank">Web3D 
+	Consortium</a> Examples Archive.
 	</div>
 	
 	<div style="margin-top:2em">
@@ -169,6 +135,11 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
         <option value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/2_cameras/positioned_camera_lookat_anno.json">
             Positioned Camera LookAt an Annotation
           </option>
+          
+        <option value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/2_cameras/positioned_camera_lookat_point.json">
+            Positioned Camera LookAt a Point
+        </option>
+
 
         </optgroup>
         <optgroup label="3. Lights">
