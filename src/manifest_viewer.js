@@ -310,15 +310,22 @@ class SceneAnnotations {
     }
 
     // lookedAtAnno is an annotation that the camera is "looking at"
-    let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
-    if (lookedAtAnno) {
-      console.log("camera is looking at " + lookedAtAnno.id);
-    } else {
-      console.log("cannot determine where camera is looking!");
+    
+    let atLocFromAnno = () => {
+        let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
+        return lookedAtAnno?.LookAtLocation;
+    }
+    
+    let atLocFromPoint = () => {
+        if (!(camera.LookAt?.isPointSelector) )  return null;
+        return camera.LookAt?.getLocation();
     }
 
-    let atPoint = lookedAtAnno.LookAtLocation;
-
+    let atPoint = atLocFromAnno() || atLocFromPoint();
+    
+    if (!atPoint)
+        throw new Error("unable to determine look at point from camera.lookAt");
+        
     let fromPoint = targetObj.wrapper?.getSelector()?.isPointSelector
       ? targetObj.wrapper.getSelector().getLocation()
       : new threejs_math.Vector3(0.0, 0.0, 0.0);
