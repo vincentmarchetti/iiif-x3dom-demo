@@ -219,9 +219,9 @@ class SceneAnnotations {
 
     if (
       targetObj.wrapper?.isSpecificResource &&
-      targetObj.wrapper.getSelector()?.isPointSelector
+      targetObj.wrapper.Selector?.isPointSelector
     ) {
-      var selector = targetObj.wrapper.getSelector();
+      var selector = targetObj.wrapper.Selector;
       x3dtransforms = x3dtransforms.concat(
         this.IIIFPointSelectorToX3dTransform(selector),
       );
@@ -255,8 +255,8 @@ class SceneAnnotations {
       // and a direction
       
       // position
-      let lightLocation = targetObj.wrapper?.getSelector()?.isPointSelector
-      ? targetObj.wrapper.getSelector().getLocation()
+      let lightLocation = targetObj.wrapper?.Selector?.isPointSelector
+      ? targetObj.wrapper.Selector().Location
       : new Vector3(0.0, 0.0, 0.0);
       
       
@@ -279,7 +279,7 @@ class SceneAnnotations {
       // which is a PointSelector
       let direction_from_lookat = () => {
         if (iiifLight.LookAt?.isPointSelector){
-          let lookAtLocation = iiifLight.LookAt.getLocation();
+          let lookAtLocation = iiifLight.LookAt.Location;
           return lookAtLocation.clone().sub(lightLocation).normalize();
         }
         else return undefined;            
@@ -355,7 +355,7 @@ class SceneAnnotations {
     
     let atLocFromPoint = () => {
         if (!(camera.LookAt?.isPointSelector) )  return null;
-        return camera.LookAt?.getLocation();
+        return camera.LookAt?.Location;
     }
 
     let atPoint = atLocFromAnno() || atLocFromPoint();
@@ -363,8 +363,8 @@ class SceneAnnotations {
     if (!atPoint)
         throw new Error("unable to determine look at point from camera.lookAt");
         
-    let fromPoint = targetObj.wrapper?.getSelector()?.isPointSelector
-      ? targetObj.wrapper.getSelector().getLocation()
+    let fromPoint = targetObj.wrapper?.Selector?.isPointSelector
+      ? targetObj.wrapper.Selector.Location
       : new Vector3(0.0, 0.0, 0.0);
 
     // warning: direction not normalized to unitlength
@@ -413,7 +413,7 @@ class SceneAnnotations {
   IIIFPointSelectorToX3dTransform(selector) {
     var retVal = document.createElement("transform");
     if (selector.isPointSelector) {
-      let loc = selector.getLocation();
+      let loc = selector.Location;
       retVal.setAttribute("translation", stringx3d.makeSFVec3f(loc));
     }
     return retVal;
