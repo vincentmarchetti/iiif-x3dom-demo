@@ -241,19 +241,6 @@ class SceneAnnotations {
     let lightNode = null;
     let iiifLight = bodyObj.base;
 
-    let light_direction = new Vector3(0.0, -1.0, 0.0);
-
-    if (bodyObj.wrapper?.isSpecificResource) {
-      let transform = bodyObj.wrapper.getTransform();
-      if (transform) {
-        // assume transform is entirely RotateTransform instances
-        let quat = mathx3d.quaternionFromRotateTransformArray(transform);
-        light_direction.applyQuaternion(quat);
-        console.log(
-          "light direction " + stringx3d.makeSFVec3f(light_direction),
-        );
-      }
-    }
 
     if (iiifLight.isAmbientLight) {
       lightNode = document.createElement("pointlight");
@@ -263,9 +250,59 @@ class SceneAnnotations {
         iiifLight.getIntensity().toString(),
       );
     } else {
+      // is a directional or spot light, requireing
+      // both a position ("location" in X3D)
+      // and a direction
+      
+      // position
+      let lightLocation = targetObj.wrapper?.getSelector()?.isPointSelector
+      ? targetObj.wrapper.getSelector().getLocation()
+      : new threejs_math.Vector3(0.0, 0.0, 0.0);
+      
+      
+      // a function which returns a direction vector if the body is a 
+      // SpecificResource with RotateTransforms, otherwise returns a
+      // undefined
+      let direction_from_rotation = () => {
+        if (bodyObj.wrapper?.isSpecificResource){
+          let transform = bodyObj.wrapper.getTransform();
+          if (transform) {
+            // assume transform is entirely RotateTransform instances
+            let quat = mathx3d.quaternionFromRotateTransformArray(transform);
+            return new threejs_math.Vector3(0.0, 0.0, -1.0).applyQuaternion(quat); 
+          }
+        }
+        return undefined;
+      };
+      
+      // a function which returns a direction if the Light has a lookAt property
+      // which is a PointSelector
+      let direction_from_lookat = () => {
+        if (iiifLight.LookAt?.isPointSelector){
+          let lookAtLocation = iiifLight.LookAt.getLocation();
+          return lookAtLocation.clone().sub(lightLocation).normalize();
+        }
+        else return undefined;            
+      };
+      
+      let light_direction = direction_from_rotation() ?? direction_from_lookat();
+      console.log("light direction: " + (light_direction)?
+                                        stringx3d.makeSFVec3f(light_direction):
+                                        "undefined" );
+      
+    
       if (iiifLight.isDirectionalLight) {
         lightNode = document.createElement("directionallight");
-      } else {
+      } 
+      else if ( iiifLight.isSpotLight ){
+        // spotlight has an angle and a location
+        lightNode = document.createElement("spotlight");
+        let angleInDegrees = MathUtils.degToRad(iiifLight.Angle );
+        lightNode.setAttribute("cutOffAngle", angleInDegrees);
+        lightNode.setAttribute("beamWidth", angleInDegrees);
+        lightNode.setAttribute("location", stringx3d.makeSFVec3f(lightLocation));
+      }
+      else {
         console.log("unknown light " + iiifLight.getType());
       }
       lightNode.setAttribute(
