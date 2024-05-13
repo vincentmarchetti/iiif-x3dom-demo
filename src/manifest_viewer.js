@@ -257,7 +257,7 @@ class SceneAnnotations {
       // position
       let lightLocation = targetObj.wrapper?.getSelector()?.isPointSelector
       ? targetObj.wrapper.getSelector().getLocation()
-      : new threejs_math.Vector3(0.0, 0.0, 0.0);
+      : new Vector3(0.0, 0.0, 0.0);
       
       
       // a function which returns a direction vector if the body is a 
@@ -269,7 +269,7 @@ class SceneAnnotations {
           if (transform) {
             // assume transform is entirely RotateTransform instances
             let quat = mathx3d.quaternionFromRotateTransformArray(transform);
-            return new threejs_math.Vector3(0.0, 0.0, -1.0).applyQuaternion(quat); 
+            return new Vector3(0.0, 0.0, -1.0).applyQuaternion(quat); 
           }
         }
         return undefined;
@@ -365,7 +365,7 @@ class SceneAnnotations {
         
     let fromPoint = targetObj.wrapper?.getSelector()?.isPointSelector
       ? targetObj.wrapper.getSelector().getLocation()
-      : new threejs_math.Vector3(0.0, 0.0, 0.0);
+      : new Vector3(0.0, 0.0, 0.0);
 
     // warning: direction not normalized to unitlength
     let direction = atPoint.clone().sub(fromPoint);
