@@ -256,9 +256,8 @@ class SceneAnnotations {
       
       // position
       let lightLocation = targetObj.wrapper?.Selector?.isPointSelector
-      ? targetObj.wrapper.Selector().Location
+      ? targetObj.wrapper.Selector.Location
       : new Vector3(0.0, 0.0, 0.0);
-      
       
       // a function which returns a direction vector if the body is a 
       // SpecificResource with RotateTransforms, otherwise returns a
@@ -280,7 +279,7 @@ class SceneAnnotations {
       let direction_from_lookat = () => {
         if (iiifLight.LookAt?.isPointSelector){
           let lookAtLocation = iiifLight.LookAt.Location;
-          return lookAtLocation.clone().sub(lightLocation).normalize();
+          return lookAtLocation?.clone().sub(lightLocation).normalize();
         }
         else return undefined;            
       };
