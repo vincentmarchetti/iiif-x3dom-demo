@@ -10,7 +10,7 @@
     "test" : "mocha"
   },
   "dependencies": {
-    "manifesto.js": "vincentmarchetti/manifesto#3dtsg-main",
+    "manifesto3d.js": "IIIF-Commons/manifesto-3d#kshell-dev",
     "threejs-math": "^0.147"
   },
   "keywords": [

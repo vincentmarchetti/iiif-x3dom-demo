@@ -2,7 +2,7 @@ import { Vector3, Quaternion } from "threejs-math";
 import { mathx3d } from "./mathx3d.js";
 import { stringx3d } from "./stringx3d.js";
 import { Vector3, MathUtils, Euler, Quaternion } from "threejs-math";
-const manifesto = require("manifesto.js/dist-commonjs/");
+const manifesto = require("manifesto3d.js/dist-commonjs/");
 /* 
 script level: define structure and event handlers to determine when
 both the window load event has been fired and the x3dom ready event
@@ -196,7 +196,7 @@ class SceneAnnotations {
     
     will put an object with members label and x3dnode on the appropriate list
     
-    anno is an instance of the Annotation class as defined in manifesto.js module
+    anno is an instance of the Annotation class as defined in manifesto3d.js module
     */
   addAnnotation(anno) {
     const body = anno.getBody()[0];
