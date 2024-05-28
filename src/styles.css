@@ -18,6 +18,9 @@ div {margin-top:1em;}
 #manifest_label_container { margin-top:1em ; 
                             font-size:18pt; 
                             text-align:center; }
+                            
+#manifest_summary_container { margin-top:1em ; 
+                              font-size:12pt; }
 
 
 

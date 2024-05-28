@@ -125,6 +125,7 @@ initialize_viewer = function () {
     },
     
     manifest_label_container : document.getElementById("manifest_label_container"),
+    manifest_summary_container : document.getElementById("manifest_summary_container"),
     
     /*
     showDescriptiveProperties will display the descriptive properties,
@@ -138,6 +139,14 @@ initialize_viewer = function () {
             let label = event?.detail?.manifest?.getLabel()?.getValue();
             console.log("Setting manifest label to: " + label );
             manifestViewer.manifest_label_container.innerHTML = label;
+            
+            if (event?.detail?.manifest?.getSummary){
+                let summary = event.detail.manifest.getSummary().getValue();
+                manifestViewer.manifest_summary_container.innerHTML = summary;
+            }
+            else{
+                console.log("manifest.getSummary is not implemented");
+            }
         };
     },
     
