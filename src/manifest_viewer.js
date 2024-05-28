@@ -123,6 +123,24 @@ initialize_viewer = function () {
         console.log(manifestViewer.annotation_container.innerHTML);
       }
     },
+    
+    manifest_label_container : document.getElementById("manifest_label_container"),
+    
+    /*
+    showDescriptiveProperties will display the descriptive properties,
+    as explained in Presentation 3.0 API (Section 3.1) in the non-3D viewport
+    of the web page
+    */
+    
+    show_descriptive_properties(event) {
+        console.log("enter : show_descriptive_properties");
+        if (event?.detail?.manifest){
+            let label = event?.detail?.manifest?.getLabel()?.getValue();
+            console.log("Setting manifest label to: " + label );
+            manifestViewer.manifest_label_container.innerHTML = label;
+        };
+    },
+    
   };
 
   manifestViewer.storeDefaultViewpoint();
@@ -140,7 +158,9 @@ initialize_viewer = function () {
   });
 
   document.addEventListener("new_manifest", manifestViewer.handleNewManifest);
-
+  document.addEventListener("new_manifest", manifestViewer.show_descriptive_properties);
+  
+  
   var event = new Event("viewer_ready");
   document.dispatchEvent(event);
 };
