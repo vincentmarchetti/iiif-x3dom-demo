@@ -7,10 +7,10 @@
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
-    "test" : "mocha"
+    "test": "mocha"
   },
   "dependencies": {
-    "manifesto3d.js": "IIIF-Commons/manifesto-3d#kshell-dev",
+    "manifesto3d.js": "file:manifesto3d.js-0.5.3.tgz",
     "threejs-math": "^0.147"
   },
   "keywords": [
