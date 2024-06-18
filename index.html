@@ -43,6 +43,25 @@ have a headlight or lights added in a IIIF manifest
     position="0 0 10" 
     orientation="0 0 1 0" 
     centerOfRotation="0 0 0" ></viewpoint>
+    
+<!-- 
+At this revision the viewpoints that are defined by annotations are implemented
+by copying the x3d field values into either the iiif-perspective-viewpoint or 
+iiif-orthographic-viewpoint nodes defind here. This is because a viewpoint or 
+orthoviewpoint created and added to the scene by javascript are not responding
+correctly to set_bind = true events.
+ -->
+
+<viewpoint id="iiif-perspective-viewpoint"
+    position="0 0 10" 
+    orientation="0 0 1 0.78" 
+    centerOfRotation="0 0 0" ></viewpoint>
+    
+<orthoviewpoint id="iiif-orthographic-viewpoint"
+    position="0 0 10" 
+    orientation="0 0 1 0.78" 
+    centerOfRotation="0 0 0" > </orthoviewpoint>
+    
  <transform id="annotation_container" scale="1 1 1">
 
 </transform>

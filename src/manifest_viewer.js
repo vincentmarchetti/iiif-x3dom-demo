@@ -21,16 +21,12 @@ x3dom.runtime.ready = function (element) {
   }
 };
 
-window.addEventListener("load", (event) => {
-  //console.log("document load fired");
-  _pre_init_state.document = true;
-  if (_pre_init_state.x3dom && _pre_init_state.document) initialize_viewer();
-});
+
 
 let manifestViewer = null;
 
-initialize_viewer = function () {
-  //console.log("initialize_viewer called");
+let initialize_viewer = function () {
+  console.log("initialize_viewer called");
 
   manifestViewer = {
     triad_switch_node: document.getElementById("triad-switch-node"),
@@ -53,6 +49,9 @@ initialize_viewer = function () {
     },
 
     default_viewpoint: document.getElementById("default-viewpoint"),
+    iiif_perspective_viewpoint: document.getElementById("iiif-perspective-viewpoint"),
+    iiif_orthographic_viewpoint: document.getElementById("iiif-orthographic-viewpoint"),
+    
     default_viewpoint_values: {
       position: null,
       orientation: null,
@@ -74,7 +73,24 @@ initialize_viewer = function () {
         if (val != null)
           manifestViewer.default_viewpoint.setAttribute(key, val);
       }
+      manifestViewer.default_viewpoint.setAttribute("set_bind","true");
     },
+    
+    
+    setProxyCamera( proxyCamera ){
+        console.log("enter setProxyCamera( proxyCamera )");
+        var cameraNode = proxyCamera.x3dnode;
+        console.log("setting node " + cameraNode.getAttribute("id") );
+        
+        for (const [key, value] of Object.entries(proxyCamera.fields)) {
+            console.log(`setting field ${key} to ${value}`);
+            cameraNode.setAttribute(key, value );
+        }
+        console.log("set 'set_bind' to true on " + cameraNode.getAttribute("id") );
+        cameraNode.setAttribute("set_bind", "true");
+    },
+    
+    
 
     background_node: document.getElementById("x3d-background"),
     defaultBackgroundColor: { red: 204, green: 204, blue: 204 },
@@ -111,6 +127,15 @@ initialize_viewer = function () {
 
         let ann = new SceneAnnotations(scene);
 
+        /*
+        for (let camera of ann.cameras) {
+            console.log(`adding ${camera.label} to scene`);
+            camera.x3dnode.setAttribute("id", "new-viewpoint");
+            manifestViewer.annotation_container.appendChild(camera.x3dnode);
+            
+        }
+        */
+
         for (let model of ann.models) {
           console.log(`adding ${model.label} to scene`);
           manifestViewer.annotation_container.appendChild(model.x3dnode);
@@ -121,6 +146,24 @@ initialize_viewer = function () {
           manifestViewer.annotation_container.appendChild(light.x3dnode);
         }
         console.log(manifestViewer.annotation_container.innerHTML);
+        
+        if (ann.cameras.length > 0){
+            manifestViewer.setProxyCamera( ann.cameras[0]);
+        }
+        //manifestViewer.default_viewpoint.setAttribute('set_bind', 'false');
+        //document.getElementById('alt-viewpoint').setAttribute('set_bind','true');
+        //setTimeout( () =>
+        //{
+        //    console.log("binding iiif viewpoint 7");
+        //    //document.getElementById('new-viewpoint').setAttribute('set_bind','true');
+        //    var vp = document.getElementById('x3delem').runtime.nextView();
+        //    console.log("viewpoint" + vp);
+            
+            //vp.setAttribute('set_bind', 'false');
+           //document.getElementById('new-viewpoint').setAttribute('bind','true');
+        //}, 10000);
+        
+        //ann.cameras[0].x3dnode.setAttribute("set_bind", "true");
       }
     },
     
@@ -173,6 +216,12 @@ initialize_viewer = function () {
   var event = new Event("viewer_ready");
   document.dispatchEvent(event);
 };
+
+window.addEventListener("load", (event) => {
+  //console.log("document load fired");
+  _pre_init_state.document = true;
+  if (_pre_init_state.x3dom && _pre_init_state.document) initialize_viewer();
+});
 
 class SceneAnnotations {
   constructor(scene) {
@@ -406,15 +455,35 @@ class SceneAnnotations {
     let attrSFRotation = stringx3d.makeSFRotation(axisAngle);
     console.log("evaluated SFRotation " + attrSFRotation);
 
-    let viewpoint = manifestViewer.default_viewpoint;
-    viewpoint.setAttribute("orientation", attrSFRotation);
-    viewpoint.setAttribute("position", stringx3d.makeSFVec3f(fromPoint));
-    viewpoint.setAttribute("centerOfRotation", stringx3d.makeSFVec3f(atPoint));
-    viewpoint.setAttribute(
-      "fieldOfView",
-      MathUtils.degToRad(camera.FieldOfView),
-    );
-    console.log(viewpoint.outerHTML);
+    let viewpointProxyNode = {};
+    
+    if (camera.isPerspectiveCamera){
+        viewpointProxyNode.x3dnode = manifestViewer.iiif_perspective_viewpoint;
+        viewpointProxyNode.fields = {
+           "fieldOfView" : MathUtils.degToRad(camera.FieldOfView) 
+        }
+    }
+    else if (camera.isOrthographicCamera) {
+        viewpointProxyNode.x3dnode = manifestViewer.iiif_orthographic_viewpoint;
+        
+        var half_height = camera.ViewHeight;
+        
+        viewpointProxyNode.fields = {
+           "fieldOfView" : [-half_height, -half_height, +half_height, +half_height ].join(" ")
+        }    
+    }
+    else{
+        console.warn("unrecognized camera type");
+        return;
+    }
+    
+    viewpointProxyNode.fields["orientation"] =  attrSFRotation;
+    viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(fromPoint);
+    viewpointProxyNode.fields["centerOfRotation"] = stringx3d.makeSFVec3f(atPoint);
+    viewpointProxyNode.fields["description"] =  label ;
+    
+    console.log("loaded proxy camera: " + JSON.stringify(viewpointProxyNode.fields));
+    this.cameras.push(viewpointProxyNode);
   }
   /*
    * @param iiiftranform : instance of manifesto.Transform class
