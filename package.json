@@ -10,8 +10,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "manifesto3d.js": "file:manifesto3d.js-0.5.3.tgz",
-    "threejs-math": "^0.147"
+    "@iiif/3d-manifesto-dev": "0.5",
+    "threejs-math": "^0"
   },
   "keywords": [
     "typescript",
@@ -19,7 +19,7 @@
   ],
   "devDependencies": {
     "chai": "^5",
-    "mocha": "^10.2.0",
-    "parcel": "^2.12.0"
+    "mocha": "^10",
+    "parcel": "^2"
   }
 }
