@@ -10,7 +10,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@iiif/3d-manifesto-dev": "0.5",
+    "@iiif/3d-manifesto-dev": "file:iiif-3d-manifesto-dev-0.5.0-alpha.1.tgz",
     "threejs-math": "^0"
   },
   "keywords": [
