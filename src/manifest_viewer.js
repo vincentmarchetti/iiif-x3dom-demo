@@ -58,7 +58,7 @@ let initialize_viewer = function () {
       centerOfRotation: null,
     },
     storeDefaultViewpoint() {
-      for (key of Object.keys(manifestViewer.default_viewpoint_values)) {
+      for (var key of Object.keys(manifestViewer.default_viewpoint_values)) {
         manifestViewer.default_viewpoint_values[key] =
           manifestViewer.default_viewpoint.getAttribute(key);
       }
@@ -263,14 +263,20 @@ class SceneAnnotations {
     //let that = this;
 
     console.log("isModel? " + bodyObj.base.isModel);
+    try{
     let addHandler = ((base) => {
       if (base.isLight) return this.addLight.bind(this);
       if (base.isModel) return this.addModel.bind(this);
       if (base.isCamera) return this.addCamera.bind(this);
+      if (base.isTextualBody) throw new Error("rendering of TextualBody not implemented");
       throw new Error("unidentified body base resource");
     })(bodyObj.base);
 
     addHandler(bodyObj, targetObj, label);
+    }
+    catch(err){
+        console.error("exception " + err);
+    }
   }
 
   /*
