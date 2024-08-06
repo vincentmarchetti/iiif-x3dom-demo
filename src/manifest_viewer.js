@@ -198,7 +198,7 @@ let initialize_viewer = function () {
   manifestViewer.storeDefaultViewpoint();
 
   let show_axes_checkbox = document.getElementById("show-axes-checkbox");
-  show_axes_checkbox.checked = true;
+  show_axes_checkbox.checked = false;
   show_axes_checkbox.addEventListener("click", (event) => {
     manifestViewer.AxesVisible = show_axes_checkbox?.checked;
   });
