@@ -422,15 +422,24 @@ class SceneAnnotations {
      * first, the existence of a non-empty transform array in the
      * specific resource
      */
-    var transformArray = bodyObj.wrapper?.getTransform();
-    if (transformArray && transformArray.length > 0) {
-      throw new Error(
-        "Camera orientation determined by transform is not implemented",
-      );
-    }
+    
+    let quat_from_transform = () => {
+        if (bodyObj.wrapper?.isSpecificResource){
+            let transform = bodyObj.wrapper.getTransform();
+            if (transform) {
+                // assume transform is entirely RotateTransform instances
+                let quat = mathx3d.quaternionFromRotateTransformArray(transform);
+                return quat;
+                //return new Vector3(0.0, 0.0, -1.0).applyQuaternion(quat); 
+            }
+        }
+        return undefined;
+    };
+
 
     // lookedAtAnno is an annotation that the camera is "looking at"
     
+    /*
     let atLocFromAnno = () => {
         let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
         return lookedAtAnno?.LookAtLocation;
@@ -456,7 +465,8 @@ class SceneAnnotations {
       "look direction" + [direction.x, direction.y, direction.z].join(" "),
     );
     let euler = manifesto.cameraRelativeRotation(direction);
-    let quat = new Quaternion().setFromEuler(euler);
+    */
+    let quat = quat_from_transform();
     let axisAngle = mathx3d.axisAngleFromQuaternion(quat);
     let attrSFRotation = stringx3d.makeSFRotation(axisAngle);
     console.log("evaluated SFRotation " + attrSFRotation);
@@ -484,9 +494,10 @@ class SceneAnnotations {
     }
     
     viewpointProxyNode.fields["orientation"] =  attrSFRotation;
-    viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(fromPoint);
-    viewpointProxyNode.fields["centerOfRotation"] = stringx3d.makeSFVec3f(atPoint);
-    viewpointProxyNode.fields["description"] =  label ;
+    //viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(fromPoint);
+    viewpointProxyNode.fields["position"] = "-0.25 0.0 -0.5"
+    viewpointProxyNode.fields["centerOfRotation"] = "0.040 0.063  -0.066";
+    viewpointProxyNode.fields["description"] =  label;
     
     console.log("loaded proxy camera: " + JSON.stringify(viewpointProxyNode.fields));
     this.cameras.push(viewpointProxyNode);
