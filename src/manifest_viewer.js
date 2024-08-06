@@ -150,6 +150,11 @@ let initialize_viewer = function () {
         if (ann.cameras.length > 0){
             manifestViewer.setProxyCamera( ann.cameras[0]);
         }
+        
+        for (let text_annotation_value of ann.text_annotations){
+            console.log(`adding ${text_annotation_value} to text annotation table`);
+            manifestViewer.addTextAnnotationValue( text_annotation_value );
+        }
         //manifestViewer.default_viewpoint.setAttribute('set_bind', 'false');
         //document.getElementById('alt-viewpoint').setAttribute('set_bind','true');
         //setTimeout( () =>
@@ -193,6 +198,15 @@ let initialize_viewer = function () {
         };
     },
     
+    text_annotations_container : document.getElementById("text-annotations-table") ,
+    
+    addTextAnnotationValue( value ){
+        let rowNode = document.createElement("tr");
+        manifestViewer.text_annotations_container.appendChild( rowNode );
+        rowNode.innerHTML = value;
+    },
+    
+    
   };
 
   manifestViewer.storeDefaultViewpoint();
@@ -228,6 +242,7 @@ class SceneAnnotations {
     this.models = [];
     this.lights = [];
     this.cameras = [];
+    this.text_annotations = [];
 
     this.scene = scene;
     // create and retain  the array of all annotations
@@ -465,9 +480,11 @@ class SceneAnnotations {
     }
     
     viewpointProxyNode.fields["orientation"] =  attrSFRotation;
-    //viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(fromPoint);
-    viewpointProxyNode.fields["position"] = "-0.25 0.0 -0.5"
-    //viewpointProxyNode.fields["centerOfRotation"] = "0.040 0.063  -0.066";
+    
+    let viewPosition = targetObj.wrapper?.Selector?.isPointSelector
+      ? targetObj.wrapper.Selector.Location
+      : new Vector3(0.0, 0.0, 0.0);
+    viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f( viewPosition );
     viewpointProxyNode.fields["description"] =  label;
     
     console.log("loaded proxy camera: " + JSON.stringify(viewpointProxyNode.fields));
@@ -476,8 +493,11 @@ class SceneAnnotations {
   
   addTextualBody( bodyObj, targetObj, label = null )
   {
-        if (bodyObj.base.isTextualBody )  
+        if (bodyObj.base.isTextualBody )  {
             console.log("textual body: " + bodyObj.base.Value);
+            this.text_annotations.push( bodyObj.base.Value );
+        }
+            
         else
             console.warn("unrecognized text resource");
   }
