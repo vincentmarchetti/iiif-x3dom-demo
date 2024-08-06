@@ -268,7 +268,7 @@ class SceneAnnotations {
       if (base.isLight) return this.addLight.bind(this);
       if (base.isModel) return this.addModel.bind(this);
       if (base.isCamera) return this.addCamera.bind(this);
-      if (base.isTextualBody) throw new Error("rendering of TextualBody not implemented");
+      if (base.isTextualBody) return this.addTextualBody.bind(this);
       throw new Error("unidentified body base resource");
     })(bodyObj.base);
 
@@ -437,35 +437,6 @@ class SceneAnnotations {
     };
 
 
-    // lookedAtAnno is an annotation that the camera is "looking at"
-    
-    /*
-    let atLocFromAnno = () => {
-        let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
-        return lookedAtAnno?.LookAtLocation;
-    }
-    
-    let atLocFromPoint = () => {
-        if (!(camera.LookAt?.isPointSelector) )  return null;
-        return camera.LookAt?.Location;
-    }
-
-    let atPoint = atLocFromAnno() || atLocFromPoint();
-    
-    if (!atPoint)
-        throw new Error("unable to determine look at point from camera.lookAt");
-        
-    let fromPoint = targetObj.wrapper?.Selector?.isPointSelector
-      ? targetObj.wrapper.Selector.Location
-      : new Vector3(0.0, 0.0, 0.0);
-
-    // warning: direction not normalized to unitlength
-    let direction = atPoint.clone().sub(fromPoint);
-    console.log(
-      "look direction" + [direction.x, direction.y, direction.z].join(" "),
-    );
-    let euler = manifesto.cameraRelativeRotation(direction);
-    */
     let quat = quat_from_transform();
     let axisAngle = mathx3d.axisAngleFromQuaternion(quat);
     let attrSFRotation = stringx3d.makeSFRotation(axisAngle);
@@ -501,6 +472,14 @@ class SceneAnnotations {
     
     console.log("loaded proxy camera: " + JSON.stringify(viewpointProxyNode.fields));
     this.cameras.push(viewpointProxyNode);
+  }
+  
+  addTextualBody( bodyObj, targetObj, label = null )
+  {
+        if (bodyObj.base.isTextualBody )  
+            console.log("textual body: " + bodyObj.base.Value);
+        else
+            console.warn("unrecognized text resource");
   }
   /*
    * @param iiiftranform : instance of manifesto.Transform class
