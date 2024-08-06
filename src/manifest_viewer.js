@@ -496,7 +496,7 @@ class SceneAnnotations {
     viewpointProxyNode.fields["orientation"] =  attrSFRotation;
     //viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(fromPoint);
     viewpointProxyNode.fields["position"] = "-0.25 0.0 -0.5"
-    viewpointProxyNode.fields["centerOfRotation"] = "0.040 0.063  -0.066";
+    //viewpointProxyNode.fields["centerOfRotation"] = "0.040 0.063  -0.066";
     viewpointProxyNode.fields["description"] =  label;
     
     console.log("loaded proxy camera: " + JSON.stringify(viewpointProxyNode.fields));
