@@ -1,4 +1,5 @@
 import { Vector3, MathUtils , Euler, Quaternion } from "threejs-math";
+const manifesto = require("@iiif/3d-manifesto-dev/dist-commonjs/");
 
 
 /*
@@ -26,28 +27,10 @@ quaternionFromRotateTransform( transform ){
     if (! transform.isRotateTransform )
         throw new Error("invalid transform to quaternionFromRotateTransform");
         
-    let rdata = transform.getRotation();
-    var degrees = [rdata.x,rdata.y,rdata.z];
-    
-    // determine how many components are non-zero, and which is the last non-zero component
-    var nonzeroCount = 0;
-    var lastNonZero = -1;
-    for (var i=0; i < 3;++i){
-        if ( degrees[i] != 0.0){
-            nonzeroCount += 1;
-            lastNonZero = i;
-        }
-    }
-    
-    // at the current 3D API (4/20/2024) throw exception if more than one component is non-zero
-    if (nonzeroCount > 1)
-        throw new Error("quaternionFromRotateTransform : invalid transform");
+    var euler = manifesto.eulerFromRotateTransform( transform );
         
-    var retVal = new Quaternion(); // default value is unit quaternion
-    if (nonzeroCount > 0){
-        var axis = new Vector3().setComponent(lastNonZero, 1.0);
-        retVal.setFromAxisAngle( axis, MathUtils.degToRad( degrees[lastNonZero]));
-    }
+    var retVal = new Quaternion().setFromEuler( euler );
+    
     return retVal;
 },
 
