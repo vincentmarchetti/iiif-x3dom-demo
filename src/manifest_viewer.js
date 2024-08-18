@@ -1,7 +1,7 @@
-import { Vector3, Quaternion } from "threejs-math";
+import { Vector3, Quaternion, Euler, MathUtils } from "threejs-math";
 import { mathx3d } from "./mathx3d.js";
 import { stringx3d } from "./stringx3d.js";
-import { Vector3, MathUtils, Euler, Quaternion } from "threejs-math";
+//import { Vector3, MathUtils, Euler, Quaternion } from "threejs-math";
 const manifesto = require("@iiif/3d-manifesto-dev/dist-commonjs/");
 /* 
 script level: define structure and event handlers to determine when
@@ -58,7 +58,7 @@ let initialize_viewer = function () {
       centerOfRotation: null,
     },
     storeDefaultViewpoint() {
-      for (key of Object.keys(manifestViewer.default_viewpoint_values)) {
+      for (var key of Object.keys(manifestViewer.default_viewpoint_values)) {
         manifestViewer.default_viewpoint_values[key] =
           manifestViewer.default_viewpoint.getAttribute(key);
       }
@@ -150,6 +150,11 @@ let initialize_viewer = function () {
         if (ann.cameras.length > 0){
             manifestViewer.setProxyCamera( ann.cameras[0]);
         }
+        
+        for (let text_annotation_value of ann.text_annotations){
+            console.log(`adding ${text_annotation_value} to text annotation table`);
+            manifestViewer.addTextAnnotationValue( text_annotation_value );
+        }
         //manifestViewer.default_viewpoint.setAttribute('set_bind', 'false');
         //document.getElementById('alt-viewpoint').setAttribute('set_bind','true');
         //setTimeout( () =>
@@ -193,12 +198,21 @@ let initialize_viewer = function () {
         };
     },
     
+    text_annotations_container : document.getElementById("text-annotations-table") ,
+    
+    addTextAnnotationValue( value ){
+        let rowNode = document.createElement("tr");
+        manifestViewer.text_annotations_container.appendChild( rowNode );
+        rowNode.innerHTML = value;
+    },
+    
+    
   };
 
   manifestViewer.storeDefaultViewpoint();
 
   let show_axes_checkbox = document.getElementById("show-axes-checkbox");
-  show_axes_checkbox.checked = true;
+  show_axes_checkbox.checked = false;
   show_axes_checkbox.addEventListener("click", (event) => {
     manifestViewer.AxesVisible = show_axes_checkbox?.checked;
   });
@@ -228,6 +242,7 @@ class SceneAnnotations {
     this.models = [];
     this.lights = [];
     this.cameras = [];
+    this.text_annotations = [];
 
     this.scene = scene;
     // create and retain  the array of all annotations
@@ -263,14 +278,20 @@ class SceneAnnotations {
     //let that = this;
 
     console.log("isModel? " + bodyObj.base.isModel);
+    try{
     let addHandler = ((base) => {
       if (base.isLight) return this.addLight.bind(this);
       if (base.isModel) return this.addModel.bind(this);
       if (base.isCamera) return this.addCamera.bind(this);
+      if (base.isTextualBody) return this.addTextualBody.bind(this);
       throw new Error("unidentified body base resource");
     })(bodyObj.base);
 
     addHandler(bodyObj, targetObj, label);
+    }
+    catch(err){
+        console.error("exception " + err);
+    }
   }
 
   /*
@@ -412,48 +433,94 @@ class SceneAnnotations {
 
     let camera = bodyObj.base; // just convenient alias
 
+    // cameraPosition set to a Vector3 instance
+    let cameraPosition = targetObj.wrapper?.Selector?.isPointSelector
+      ? targetObj.wrapper.Selector.Location
+      : new Vector3(0.0, 0.0, 0.0);
     /* determine a camera orientation from two possible ways
      * first, the existence of a non-empty transform array in the
      * specific resource
+     * cameraOrientation will be set to a Quaternion instance that
+     * represents the required rotations from the X3D default camera direction
+     * pointing in the -z axis  direction
      */
-    var transformArray = bodyObj.wrapper?.getTransform();
-    if (transformArray && transformArray.length > 0) {
-      throw new Error(
-        "Camera orientation determined by transform is not implemented",
-      );
+     
+    // each of the orientationFromXXXXX will return either 
+    // Quaternion instance or the undefined type
+    let orientationFromTransformArray = () => {
+        if (bodyObj.wrapper?.isSpecificResource){
+            let transform = bodyObj.wrapper.getTransform();
+            if (transform) {
+                // assume transform is entirely RotateTransform instances
+                return mathx3d.quaternionFromRotateTransformArray(transform);
+            }
+            return undefined;
+         }
     }
-
-    // lookedAtAnno is an annotation that the camera is "looking at"
     
-    let atLocFromAnno = () => {
-        let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
-        return lookedAtAnno?.LookAtLocation;
-    }
-    
-    let atLocFromPoint = () => {
-        if (!(camera.LookAt?.isPointSelector) )  return null;
-        return camera.LookAt?.Location;
-    }
-
-    let atPoint = atLocFromAnno() || atLocFromPoint();
-    
-    if (!atPoint)
-        throw new Error("unable to determine look at point from camera.lookAt");
+    let orientationFromLookAt = () => {
+        var lookFrom = cameraPosition;
         
-    let fromPoint = targetObj.wrapper?.Selector?.isPointSelector
-      ? targetObj.wrapper.Selector.Location
-      : new Vector3(0.0, 0.0, 0.0);
+        // there are two mechanisms to determine what the 
+        // camera should be looking at
+        // each of the atLocFrom will return either a Vector3
+        // or an undefined type
+        let atLocFromAnno = () => {
+            let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
+            return lookedAtAnno?.LookAtLocation;
+        }
+        
+        let atLocFromPoint = () => {
+            if (!(camera.LookAt?.isPointSelector) )  return undefined;
+            return camera.LookAt?.Location;
+        }
+        
+        let lookAt = atLocFromAnno() ?? atLocFromPoint();
+        if (! lookAt ) return undefined;
+        
+        let direction = atPoint.clone().sub(fromPoint).normalize();
+        let euler = manifesto.cameraRelativeRotation(direction);
+        return new Quaternion().setFromEuler(euler);
+    }
+    
+    
+    let quat = orientationFromTransformArray() ?? orientationFromLookAt();
+    
 
-    // warning: direction not normalized to unitlength
-    let direction = atPoint.clone().sub(fromPoint);
-    console.log(
-      "look direction" + [direction.x, direction.y, direction.z].join(" "),
-    );
-    let euler = manifesto.cameraRelativeRotation(direction);
-    let quat = new Quaternion().setFromEuler(euler);
+    // centerFromXXXX returns a Vector3 or undefined ; a position intended to
+    // be the center of rotation of an X3D Viewpoint
+
+    let centerFromTransformArray = () => {
+        // at this point of development we have no way of 
+        // determining a center of rotation just from the camera transform
+        return undefined;
+    }
+    
+    let centerFromTransformArray = () => {
+        
+        // there are two mechanisms to determine what the 
+        // camera should be looking at
+        // each of the atLocFrom will return either a Vector3
+        // or an undefined type
+        let atLocFromAnno = () => {
+            let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
+            return lookedAtAnno?.LookAtLocation;
+        }
+        
+        let atLocFromPoint = () => {
+            if (!(camera.LookAt?.isPointSelector) )  return undefined;
+            return camera.LookAt?.Location;
+        }
+        
+        return atLocFromAnno() ?? atLocFromPoint();
+    }
+
+    let center = orientationFromTransformArray() ?? orientationFromLookAt();
+    
+    
     let axisAngle = mathx3d.axisAngleFromQuaternion(quat);
     let attrSFRotation = stringx3d.makeSFRotation(axisAngle);
-    console.log("evaluated SFRotation " + attrSFRotation);
+    // console.log("evaluated SFRotation " + attrSFRotation);
 
     let viewpointProxyNode = {};
     
@@ -478,8 +545,11 @@ class SceneAnnotations {
     }
     
     viewpointProxyNode.fields["orientation"] =  attrSFRotation;
-    viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(fromPoint);
-    viewpointProxyNode.fields["centerOfRotation"] = stringx3d.makeSFVec3f(atPoint);
+    viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(cameraPosition);
+    
+    if (center)
+        viewpointProxyNode.fields["centerOfRotation"] = stringx3d.makeSFVec3f(atPoint);
+    
     viewpointProxyNode.fields["description"] =  label ;
     
     console.log("loaded proxy camera: " + JSON.stringify(viewpointProxyNode.fields));

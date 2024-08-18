@@ -65,7 +65,7 @@ correctly to set_bind = true events.
  <transform id="annotation_container" scale="1 1 1">
 
 </transform>
-<switch id="triad-switch-node" whichChoice="0">
+<switch id="triad-switch-node" whichChoice="-1">
 <inline url='"https://spri-open-resources.s3.us-east-2.amazonaws.com/iiif3dtsg/manifesto_viewer/CoordinateAxes.x3d"'></inline>
 </switch>
 
@@ -86,6 +86,12 @@ lighting effects
     
 </scene>
 </x3d> 
+</div>
+
+<div class="canvas-width" id="text-annotations-container">
+<div>Text Annotations</div>
+<table id="text-annotations-table">
+</table>
 </div>
 
 <div class="canvas-width" id="manifest_label_container"> </div>	
@@ -217,11 +223,10 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
         (a) cranium & mandible positioned
         </option>
         
-        <!-- 
-<option value="https://raw.githubusercontent.com/IIIF/3d/whale_anno/manifests/xx_whale_comments/c_comment_annotation_camera.json">
+        <option value="https://raw.githubusercontent.com/IIIF/3d/whale_anno/manifests/xx_whale_comments/c_comment_annotation_camera.json">
         (c) comment and annotation camera
         </option>
- -->
+
         
         </optgroup>
       </select>
