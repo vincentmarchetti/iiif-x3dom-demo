@@ -453,9 +453,9 @@ class SceneAnnotations {
             if (transform) {
                 // assume transform is entirely RotateTransform instances
                 return mathx3d.quaternionFromRotateTransformArray(transform);
-            }
-            return undefined;
+            }            
          }
+         return undefined;
     }
     
     let orientationFromLookAt = () => {
@@ -478,13 +478,14 @@ class SceneAnnotations {
         let lookAt = atLocFromAnno() ?? atLocFromPoint();
         if (! lookAt ) return undefined;
         
-        let direction = atPoint.clone().sub(fromPoint).normalize();
+        let direction = lookAt.clone().sub(lookFrom).normalize();
         let euler = manifesto.cameraRelativeRotation(direction);
         return new Quaternion().setFromEuler(euler);
     }
     
     
     let quat = orientationFromTransformArray() ?? orientationFromLookAt();
+    console.log("camera orientation " + quat );
     
 
     // centerFromXXXX returns a Vector3 or undefined ; a position intended to
@@ -493,34 +494,53 @@ class SceneAnnotations {
     let centerFromTransformArray = () => {
         // at this point of development we have no way of 
         // determining a center of rotation just from the camera transform
-        return undefined;
+        return null;
     }
     
-    let centerFromTransformArray = () => {
+    
+    
+    let centerFromLookAt = () => {
         
         // there are two mechanisms to determine what the 
         // camera should be looking at
         // each of the atLocFrom will return either a Vector3
         // or an undefined type
+        
         let atLocFromAnno = () => {
-            let lookedAtAnno = this.scene.getAnnotationById(camera.LookAt?.id);
-            return lookedAtAnno?.LookAtLocation;
-        }
+            
+            try{
+                var lookedAtAnnoId = camera.LookAt?.id;
+                let lookedAtAnno = ( lookedAtAnnoId )? this.scene.getAnnotationById(lookedAtAnnoId):null;
+                return lookedAtAnno?.LookAtLocation;
+            }
+            catch(err){
+                return null;    
+            }
+                        
+        };
         
         let atLocFromPoint = () => {
-            if (!(camera.LookAt?.isPointSelector) )  return undefined;
-            return camera.LookAt?.Location;
-        }
+            try{
+                if (!(camera?.LookAt?.isPointSelector) )  return null;
+                return camera?.LookAt?.Location ?? null;
+            }
+            catch(err){
+                return null;
+            }
+            
+        };
         
-        return atLocFromAnno() ?? atLocFromPoint();
+        return  atLocFromAnno() ?? atLocFromPoint();
+        
     }
 
-    let center = orientationFromTransformArray() ?? orientationFromLookAt();
+    var center =  centerFromLookAt() ;
+    console.log("camera center " + center );
     
     
     let axisAngle = mathx3d.axisAngleFromQuaternion(quat);
     let attrSFRotation = stringx3d.makeSFRotation(axisAngle);
-    // console.log("evaluated SFRotation " + attrSFRotation);
+    console.log("evaluated SFRotation " + attrSFRotation);
 
     let viewpointProxyNode = {};
     
@@ -548,12 +568,23 @@ class SceneAnnotations {
     viewpointProxyNode.fields["position"] = stringx3d.makeSFVec3f(cameraPosition);
     
     if (center)
-        viewpointProxyNode.fields["centerOfRotation"] = stringx3d.makeSFVec3f(atPoint);
+        viewpointProxyNode.fields["centerOfRotation"] = stringx3d.makeSFVec3f(center);
     
     viewpointProxyNode.fields["description"] =  label ;
     
     console.log("loaded proxy camera: " + JSON.stringify(viewpointProxyNode.fields));
     this.cameras.push(viewpointProxyNode);
+  }
+  
+  addTextualBody( bodyObj, targetObj, label = null )
+  {
+        if (bodyObj.base.isTextualBody )  {
+            console.log("textual body: " + bodyObj.base.Value);
+            this.text_annotations.push( bodyObj.base.Value );
+        }
+            
+        else
+            console.warn("unrecognized text resource");
   }
   /*
    * @param iiiftranform : instance of manifesto.Transform class
