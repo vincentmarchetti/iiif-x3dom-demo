@@ -68,7 +68,7 @@ let initialize_viewer = function () {
       );
     },
     restoreDefaultViewpoint() {
-      for (key of Object.keys(manifestViewer.default_viewpoint_values)) {
+      for (var key of Object.keys(manifestViewer.default_viewpoint_values)) {
         let val = manifestViewer.default_viewpoint_values[key];
         if (val != null)
           manifestViewer.default_viewpoint.setAttribute(key, val);
