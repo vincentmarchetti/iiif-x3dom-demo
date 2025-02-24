@@ -266,25 +266,54 @@ class SceneAnnotations {
     const body = anno.getBody()[0];
     const target = anno.getTarget();
 
-    let bodyObj = body.isSpecificResource
+    let bodyObj = body.isSpecificResource()
       ? { base: body.getSource(), wrapper: body }
       : { base: body, wrapper: null };
 
-    let targetObj = target.isSpecificResource
+
+    /*
+    Developer Note 24 Feb 2025
+    for the revised AnnotationBody class which is the subject of PR 27
+    https://github.com/IIIF-Commons/manifesto-3d/pull/27
+    isSpecificResource is defined as as function returning bool
+    
+    
+    For the case of the target the test here has to accomodate the 
+    threadbare object returned by JSONLDResource.getPropertyAsObject
+    when the manifest just has an IRI for the target field.
+    */
+    let targetObj = ( target.isSpecificResource && 
+        ( (typeof(target.isSpecificResource) == "function" && target.isSpecificResource())
+        ||  target.isSpecificResource == true ))
       ? { base: target.getSource(), wrapper: target }
       : { base: target, wrapper: null };
 
     var label = anno.getLabel()?.getValue();
     //let that = this;
 
-    console.log("isModel? " + bodyObj.base.isModel);
+    console.log("bodyObj.base.getType() " + bodyObj.base.getType());
     try{
     let addHandler = ((base) => {
-      if (base.isLight) return this.addLight.bind(this);
-      if (base.isModel) return this.addModel.bind(this);
-      if (base.isCamera) return this.addCamera.bind(this);
-      if (base.isTextualBody) return this.addTextualBody.bind(this);
-      throw new Error("unidentified body base resource");
+      var lowType = base.getType().toLowerCase();
+      switch (lowType){
+        case "ambientlight":
+        case "directionallight":
+        case "spotlight":
+            return this.addLight.bind(this);
+            break;
+        case "model":
+            return this.addModel.bind(this);
+            break;
+        case "perspectivecamera":
+        case "orthographiccamera":
+            return this.addCamera.bind(this);
+            break;
+        case "textualbody":
+            return this.addTextualBody.bind(this);
+            break;
+        default:
+            throw new Error("unidentified body base resource " + lowType);
+      }
     })(bodyObj.base);
 
     addHandler(bodyObj, targetObj, label);
