@@ -159,17 +159,25 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
         </optgroup>
         
         <optgroup label="2. Cameras">
+        <option value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/2_cameras/perspective_camera.json">
+            Perspective Camera
+        </option>
+        
         <option value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/2_cameras/positioned_camera_lookat_anno.json">
             Positioned Camera LookAt an Annotation
-          </option>
+        </option>
           
         <option value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/2_cameras/positioned_camera_lookat_point.json">
             Perspective Camera LookAt a Point
         </option>
         
+        
+        <!-- 
+        Note Feb 24 2025 omitting Orthographic Camera example pending it inclusion in iiif/3d main branch
         <option value="https://raw.githubusercontent.com/vincentmarchetti/iiif3dtsg/kshell-dev/manifests/2_cameras/orthographic_camera_lookat_point.json">
             Orthographic Camera LookAt a Point
         </option>
+         -->
 
 
 
@@ -183,9 +191,12 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
           </option>
 
 
-          <option class="modified" value="https://raw.githubusercontent.com/vincentmarchetti/iiif3dtsg/kshell-dev/manifests/3_lights/spotlight_lookat_positioned.json">
+          <!-- 
+            Note Feb 24 2025 omitting Orthographic Camera example pending it inclusion in iiif/3d main branch
+            <option class="modified" value="https://raw.githubusercontent.com/vincentmarchetti/iiif3dtsg/kshell-dev/manifests/3_lights/spotlight_lookat_positioned.json">
             SpotLight with lookAt
           </option>
+            -->
 
         </optgroup>
         <optgroup label="4. Transform and Position">
@@ -204,9 +215,14 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
             Translated Rotated Model
           </option>
           
-          <option class="modified" value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/4_transform_and_position/model_transform_negative_scale_position.json">
+          <option  value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/4_transform_and_position/model_transform_negative_scale_position.json">
             Model shown normally and mirrored
           </option>
+          
+          <option  value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/4_transform_and_position/whale_cranium_and_mandible_position.json">
+            Whale Cranium and Mandible Positioned
+          </option>
+          
         </optgroup>
         
         <optgroup
@@ -216,15 +232,7 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
         </option>
         </optgroup>
         
-        <optgroup
-        label="xx. Whale Comments" >
-        <option value="https://raw.githubusercontent.com/IIIF/3d/whale_anno/manifests/xx_whale_comments/a_cranium_and_mandible_positioned.json">
-        (a) cranium & mandible positioned
-        </option>
-        
-        <option value="https://raw.githubusercontent.com/IIIF/3d/whale_anno/manifests/xx_whale_comments/c_comment_annotation_camera.json">
-        (c) comment and annotation camera
-        </option>
+
 
         
         </optgroup>
