@@ -1,5 +1,5 @@
 import { Vector3, MathUtils , Euler, Quaternion } from "threejs-math";
-const manifesto = require("@iiif/3d-manifesto-dev/dist-commonjs/");
+const manifesto = require("manifesto-3d/dist-commonjs/");
 
 
 /*

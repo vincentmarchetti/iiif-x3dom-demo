@@ -2,7 +2,7 @@ import { Vector3, Quaternion, Euler, MathUtils } from "threejs-math";
 import { mathx3d } from "./mathx3d.js";
 import { stringx3d } from "./stringx3d.js";
 //import { Vector3, MathUtils, Euler, Quaternion } from "threejs-math";
-const manifesto = require("@iiif/3d-manifesto-dev/dist-commonjs/");
+const manifesto = require("manifesto-3d/dist-commonjs/");
 /* 
 script level: define structure and event handlers to determine when
 both the window load event has been fired and the x3dom ready event
