@@ -141,7 +141,9 @@ lighting effects
 
 <!-- end 1 row 2 colomn table for X3DOM elements -->
 
-
+<!-- template
+<option value=""></option>
+-->
 <!-- 
 Form UI for choosing manifest from drop down
 or loading from text input
@@ -156,8 +158,7 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
           <option value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/1_basic_model_in_scene/model_origin_bgcolor.json">
             Single Model with background color
           </option>
-        </optgroup>
-        
+        </optgroup>        
         <optgroup label="2. Cameras">
         <option value="https://raw.githubusercontent.com/IIIF/3d/main/manifests/2_cameras/perspective_camera.json">
             Perspective Camera
@@ -223,22 +224,23 @@ based on https://github.com/JulieWinchester/iiif-threejs-demo
             Whale Cranium and Mandible Positioned
           </option>
           
-        </optgroup>
+        </optgroup>        
+        <optgroup label="9. Supplementing Annotations" >
         
-        <optgroup
-        label="9. Supplementing Annotations" >
+        </optgroup>
+        <optgroup label="10. Content State">  
+        <option value="https://raw.githubusercontent.com/IIIF/3d/refs/heads/main/manifests/10_content_state/whale_comment_scope_content_state.json">Whale Comment Content State</option>
+        </optgroup>      
+        <optgroup label="Extra Examples">
         <option value="https://raw.githubusercontent.com/vincentmarchetti/iiif3dtsg/kshell-dev/manifests/9_supplementing_annotations/archie_with_supplement.json">
         Archimedes with Theorem
         </option>
         </optgroup>
+    
         
+        <!-- </optgroup> -->
 
-
-        
-        </optgroup>
-
-        <optgroup
-        label="Landmark target proposal" >
+        <optgroup label="Landmark target proposal" >
         <option value="https://raw.githubusercontent.com/vincentmarchetti/iiif3dtsg/refs/heads/landmark-target/manifests/scenes_with_landmarks/astronaut_glove.json">
         Astronaut Glove
         </option>
