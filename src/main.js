@@ -1,4 +1,4 @@
-const manifesto = require("manifesto-3d/dist-commonjs/");
+const manifesto = require("@iiif/3d-manifesto-dev/dist-commonjs/");
 
 //let iiifManifest;
 
