@@ -2,7 +2,7 @@
   "name": "iiif-x3dom-demo",
   "version": "1.0.0",
   "description": "Demo experiment of IIIF 3D content using X3DOM",
-  "source": "index.html",
+  "source": "src/index.html",
   "type": "module",
   "scripts": {
     "start": "parcel",
