@@ -5,7 +5,7 @@
   "source": "src/index.html",
   "type": "module",
   "scripts": {
-    "start": "parcel",
+    "start": "parcel --open",
     "build": "parcel build",
     "test": "mocha"
   },
