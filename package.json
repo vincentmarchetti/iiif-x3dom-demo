@@ -14,12 +14,10 @@
     "threejs-math": "^0.147.0"
   },
   "keywords": [
-    "typescript",
-    "javascript"
+    "x3dom"
   ],
   "devDependencies": {
-    "chai": "^5",
-    "mocha": "^10",
-    "parcel": "^2"
+    "parcel": "^2",
+    "posthtml-include": "^2.0.1"
   }
 }
