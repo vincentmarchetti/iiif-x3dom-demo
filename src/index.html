@@ -25,66 +25,7 @@ col 1 UI for x3dom:
 	<td>
 	
 <div class="canvas-width canvas-height" style="margin-top:1em;">
-<x3d id="x3delem" class="canvas-width canvas-height"> 
-<scene>
-<navigationinfo id="navigationinfo-node" headlight='true'></navigationinfo>
-
-<background id="x3d-background" skyColor="0.8 0.8 0.8"> </background>
-
-<!-- 
-Adding a zero-intensity light. Otherwise X3DOM tries to be helpful
-and puts in a default ambient light. The intention here is to only
-have a headlight or lights added in a IIIF manifest
- -->
-<pointlight ambientIntensity="0.0" intensity="0"  global='true'> </pointlight>
-
-
-<viewpoint id="default-viewpoint"
-    position="0 0 10" 
-    orientation="0 0 1 0" 
-    centerOfRotation="0 0 0" ></viewpoint>
-    
-<!-- 
-At this revision the viewpoints that are defined by annotations are implemented
-by copying the x3d field values into either the iiif-perspective-viewpoint or 
-iiif-orthographic-viewpoint nodes defind here. This is because a viewpoint or 
-orthoviewpoint created and added to the scene by javascript are not responding
-correctly to set_bind = true events.
- -->
-
-<viewpoint id="iiif-perspective-viewpoint"
-    position="0 0 10" 
-    orientation="0 0 1 0.78" 
-    centerOfRotation="0 0 0" ></viewpoint>
-    
-<orthoviewpoint id="iiif-orthographic-viewpoint"
-    position="0 0 10" 
-    orientation="0 0 1 0.78" 
-    centerOfRotation="0 0 0" > </orthoviewpoint>
-    
- <transform id="annotation_container" scale="1 1 1">
-
-</transform>
-<switch id="triad-switch-node" whichChoice="-1">
-<inline url='"https://spri-open-resources.s3.us-east-2.amazonaws.com/iiif3dtsg/manifesto_viewer/CoordinateAxes.x3d"'></inline>
-</switch>
-
-<!-- 
-The following white ball could be added to the scene to check
-lighting effects
- -->
-<switch id="white-sphere" whichChoice="-1">
-    <transform translation = "0 -0.7 0">
-    <shape>
-    <sphere radius="0.25""></sphere>
-    <appearance>
-        <material emissiveColor="0 0 0" diffuseColor="1 1 1"></material>
-    </appearance>
-    </shape>
-    </transform>
-</switch>
-</scene>
-</x3d> 
+<include src="x3d_scene.html"></include>
 </div>
 
 <div class="canvas-width" id="text-annotations-container">
