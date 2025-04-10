@@ -2,10 +2,10 @@
   "name": "iiif-x3dom-demo",
   "version": "1.0.0",
   "description": "Demo experiment of IIIF 3D content using X3DOM",
-  "source": "index.html",
+  "source": "src/index.html",
   "type": "module",
   "scripts": {
-    "start": "parcel",
+    "start": "parcel --open",
     "build": "parcel build",
     "test": "mocha"
   },
@@ -14,12 +14,10 @@
     "threejs-math": "^0.147.0"
   },
   "keywords": [
-    "typescript",
-    "javascript"
+    "x3dom"
   ],
   "devDependencies": {
-    "chai": "^5",
-    "mocha": "^10",
-    "parcel": "^2"
+    "parcel": "^2",
+    "posthtml-include": "^2.0.1"
   }
 }

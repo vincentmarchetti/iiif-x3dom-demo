@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>IIIF 3D Manifest Viewer -- X3DOM</title>
+    
+    <script type='text/javascript' src='https://x3dom.org/release/x3dom-full.js'> </script>         
+    <script type='module' src='manifest_viewer.js'> </script>
+
+    <link rel='stylesheet' type='text/css' href='https://x3dom.org/release/x3dom.css'></link> 
+    <link href="styles.css" rel="stylesheet" />
+  </head>
+  <body>
+
+
+<!-- 
+1 row 2 column table with
+col 0 x3dom canvas and div for text of manifest label
+col 1 UI for x3dom:
+- show/axes
+- headlight on/off
+ -->
+<table>
+	<tr> 
+	<td>
+	
+<div class="canvas-width canvas-height" style="margin-top:1em;">
+<include src="x3d_scene.html"></include>
+</div>
+
+<div class="canvas-width" id="text-annotations-container">
+<div>Text Annotations</div>
+<table id="text-annotations-table">
+</table>
+</div>
+
+<div class="canvas-width" id="manifest_label_container"> </div>	
+<div class="canvas-width" id="manifest_summary_container"> </div>	
+	</td>	
+
+	<td style="padding-left:2em; vertical-align:top; width:360px">
+	<div >
+	Key Press Commands<br>
+	<span style="font-style:italic; font-size:10pt">Click scene to set focus (green border)</span><br>
+	a : Show All<br>
+	r : Reset View<br>
+	</div>	
+	
+	<div style="margin-top:2em">
+	<div>
+	<input  type="checkbox"  id="show-axes-checkbox" />
+	<span style="margin-left:0em">Show Coordinate Axes</span>
+	</div>
+	
+	<div id="axes-description" style="line-height:1.2em; visibility:visible;">
+	    Axes markers are 2 global units in length.<br>
+	    Red   X axis<br>
+	    Green Y axis<br>
+	    Blue  Z axis<br>
+	    
+	<div style="font-style:italic; font-size:smaller;"><a href="https://www.web3d.org/x3d/content/examples/X3dForWebAuthors/Chapter03Grouping/CoordinateAxesIndex.html" target="_blank">CoordinateAxes</a> marker courtesy of <a href="https://web3d.org" target="_blank">Web3D 
+	Consortium</a> Examples Archive.
+	</div>
+	</div>
+	</div>
+	
+	<div style="margin-top:2em">
+	<div>
+	<input  type="checkbox"  id="headlight-on-checkbox" />
+	<span style="margin-left:0em">Headlight</span>
+	</div>
+	
+	<div id="headlight-description" style="line-height:1.2em; visibility:visible;">
+	    Headlight is  default lighting available in X3D viewer.
+	</div>
+	</div>
+	
+	</td> 
+</tr>
+</table>
+
+<!-- end 1 row 2 colomn table for X3DOM elements -->
+
+<!-- 
+Form UI for choosing manifest from drop down
+or loading from text input
+based on https://github.com/JulieWinchester/iiif-threejs-demo
+ -->
+<div id="form">
+    <!-- 
+    Include the separate file which contains a closed HTML Element
+    <select id="manifest-select" name="manifest">
+    enclosing a tree of optgroup | option elements
+    -->
+    <include src="select_manifest.html"></include>
+    <div class="form-group">
+        <input type="text" id="manifest-url" name="manifest-url" value=""></input>
+        <button id="load-manifest-from-url">Load Manifest From URL</button>
+    </div>
+    <textarea id="manifest-text" name="manifest-text" rows="10"></textarea>
+    <button id="load-manifest-from-text">Load Manifest From Text</button>
+</div>
+<!-- End form UI for choosing manifest -->
+
+<script type="module" src="listeners.js"></script>
+</body>
+</html>
