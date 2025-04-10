@@ -12,6 +12,85 @@
   </head>
   <body>
 
+<div style="display:flex">
+
+<div style="width:600px">
+<div class="canvas-width canvas-height" style="margin-top:1em;">
+<include src="x3d_scene.html"></include>
+</div>
+
+<div>
+	<input  type="checkbox"  id="show-axes-checkbox" />
+	<span style="margin-left:0em">Show Coordinate Axes</span>
+	</div>
+	
+	<div>
+	<input  type="checkbox"  id="headlight-on-checkbox" />
+	<span style="margin-left:0em">Headlight</span>
+	</div>
+
+</div>
+
+<div style="flex-grow:1">
+<div id="form">
+    <!-- 
+    Include the separate file which contains a closed HTML Element
+    <select id="manifest-select" name="manifest">
+    enclosing a tree of optgroup | option elements
+    -->
+    <textarea id="manifest-text" name="manifest-text" rows="40">
+{
+  "@context": "http://iiif.io/api/presentation/4/context.json",
+  "id": "https://example.org/iiif/3d/model_origin.json",
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "Single Model"
+    ]
+  },
+  "summary": {
+    "en": [
+      "Viewer should render the model at the scene origin, and then viewer should add default lighting and camera"
+    ]
+  },
+  "items": [
+    {
+      "id": "https://example.org/iiif/scene1/page/p1/1",
+      "type": "Scene",
+      "label": {
+        "en": [
+          "A Scene"
+        ]
+      },
+      "items": [
+        {
+          "id": "https://example.org/iiif/scene1/page/p1/1",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://example.org/iiif/3d/anno1",
+              "type": "Annotation",
+              "motivation": [
+                "painting"
+              ],
+              "body": {
+                "id": "https://raw.githubusercontent.com/IIIF/3d/main/assets/astronaut/astronaut.glb",
+                "type": "Model",
+                "format": "model/gltf-binary"
+              },
+              "target": "https://example.org/iiif/scene1/page/p1/1"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}    
+    </textarea>
+    <button id="load-manifest-from-text">Load Manifest From Text</button>
+</div>
+</div>
+</div>
 
 <!-- 
 1 row 2 column table with
@@ -20,13 +99,10 @@ col 1 UI for x3dom:
 - show/axes
 - headlight on/off
  -->
-<table>
-	<tr> 
-	<td>
+
 	
-<div class="canvas-width canvas-height" style="margin-top:1em;">
-<include src="x3d_scene.html"></include>
-</div>
+
+<!-- 
 
 <div class="canvas-width" id="text-annotations-container">
 <div>Text Annotations</div>
@@ -78,6 +154,7 @@ col 1 UI for x3dom:
 	</td> 
 </tr>
 </table>
+ -->
 
 <!-- end 1 row 2 colomn table for X3DOM elements -->
 
@@ -86,20 +163,7 @@ Form UI for choosing manifest from drop down
 or loading from text input
 based on https://github.com/JulieWinchester/iiif-threejs-demo
  -->
-<div id="form">
-    <!-- 
-    Include the separate file which contains a closed HTML Element
-    <select id="manifest-select" name="manifest">
-    enclosing a tree of optgroup | option elements
-    -->
-    <include src="select_manifest.html"></include>
-    <div class="form-group">
-        <input type="text" id="manifest-url" name="manifest-url" value=""></input>
-        <button id="load-manifest-from-url">Load Manifest From URL</button>
-    </div>
-    <textarea id="manifest-text" name="manifest-text" rows="10"></textarea>
-    <button id="load-manifest-from-text">Load Manifest From Text</button>
-</div>
+
 <!-- End form UI for choosing manifest -->
 
 <script type="module" src="listeners.js"></script>
