@@ -186,11 +186,13 @@ let initialize_viewer = function () {
         if (event?.detail?.manifest){
             let label = event?.detail?.manifest?.getLabel()?.getValue();
             console.log("Setting manifest label to: " + label );
-            manifestViewer.manifest_label_container.innerHTML = label;
+            if (manifestViewer.manifest_label_container)
+                manifestViewer.manifest_label_container.innerHTML = label;
             
             if (event?.detail?.manifest?.getSummary){
                 let summary = event.detail.manifest.getSummary().getValue();
-                manifestViewer.manifest_summary_container.innerHTML = summary;
+                if (manifestViewer.manifest_summary_container)
+                    manifestViewer.manifest_summary_container.innerHTML = summary;
             }
             else{
                 console.log("manifest.getSummary is not implemented");
