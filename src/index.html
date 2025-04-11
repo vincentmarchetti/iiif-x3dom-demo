@@ -6,6 +6,7 @@
     
     <script type='text/javascript' src='https://x3dom.org/release/x3dom-full.js'> </script>         
     <script type='module' src='manifest_viewer.js'> </script>
+    <script type='module' src='main.js'> </script>
 
     <link rel='stylesheet' type='text/css' href='https://x3dom.org/release/x3dom.css'></link> 
     <link href="styles.css" rel="stylesheet" />
@@ -28,7 +29,17 @@
 	<input  type="checkbox"  id="headlight-on-checkbox" />
 	<span style="margin-left:0em">Headlight</span>
 	</div>
-
+	<script>
+	function show_all()
+    {
+        var x3delem = document.getElementById('x3delem');
+        if (x3delem)
+            x3delem.runtime.showAll();
+        else
+            console.error("x3delem not located")
+    }
+    </script>
+<button onclick='show_all()'>Show All</button>
 </div>
 
 <div style="flex-grow:1">
@@ -38,56 +49,22 @@
     <select id="manifest-select" name="manifest">
     enclosing a tree of optgroup | option elements
     -->
-    <textarea id="manifest-text" name="manifest-text" rows="40">
-{
-  "@context": "http://iiif.io/api/presentation/4/context.json",
-  "id": "https://example.org/iiif/3d/model_origin.json",
-  "type": "Manifest",
-  "label": {
-    "en": [
-      "Single Model"
-    ]
-  },
-  "summary": {
-    "en": [
-      "Viewer should render the model at the scene origin, and then viewer should add default lighting and camera"
-    ]
-  },
-  "items": [
-    {
-      "id": "https://example.org/iiif/scene1/page/p1/1",
-      "type": "Scene",
-      "label": {
-        "en": [
-          "A Scene"
-        ]
-      },
-      "items": [
-        {
-          "id": "https://example.org/iiif/scene1/page/p1/1",
-          "type": "AnnotationPage",
-          "items": [
-            {
-              "id": "https://example.org/iiif/3d/anno1",
-              "type": "Annotation",
-              "motivation": [
-                "painting"
-              ],
-              "body": {
-                "id": "https://raw.githubusercontent.com/IIIF/3d/main/assets/astronaut/astronaut.glb",
-                "type": "Model",
-                "format": "model/gltf-binary"
-              },
-              "target": "https://example.org/iiif/scene1/page/p1/1"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}    
+    <textarea id="manifest-text" name="manifest-text" rows="35">
+    init text
     </textarea>
+    <script>
+    function load_from_url( manifestUrl){
+        var evt = new CustomEvent("load_text_from_url", {"detail":{"url" : manifestUrl}});
+        document.dispatchEvent( evt );
+    }
+    
+    
+    </script>
     <button id="load-manifest-from-text">Load Manifest From Text</button>
+    <button onclick='load_from_url("https://raw.githubusercontent.com/IIIF/3d/main/manifests/1_basic_model_in_scene/model_origin.json")'>
+    Astronaut</a>
+    <button onclick='load_from_url("https://raw.githubusercontent.com/IIIF/3d/main/manifests/9_commenting_annotations/whale_comment_camera.json")'>
+    Whale Cranium</a>
 </div>
 </div>
 </div>
