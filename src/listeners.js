@@ -43,7 +43,14 @@ document.addEventListener("viewer_ready", async (event) => {
   });
  */
   
-  
+
+document.addEventListener("load_text_from_url", async (event) =>
+{
+    var manifestUrl = event.detail.url;
+    console.log("in load_text_from_url " + manifestUrl);
+    await fetchManifestFromUrl(manifestUrl);
+});
+
 function fireNewManifestEvent( newManifest ){
     console.log("firing new_manifest");
     var toFire = new CustomEvent("new_manifest", { detail : {manifest : newManifest }});
