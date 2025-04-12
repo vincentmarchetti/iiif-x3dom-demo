@@ -3,50 +3,44 @@ body {
   display: flex;
   flex-direction: column;
   align-items: left;
-}
-
-body {font-size:12pt; 
+  font-size:12pt; 
       margin-top:1em; 
       margin-left:1em;
-      line-height:1.5em;}
+      line-height:1.5em;
+}
+
+
 
 .canvas-width  {width:512px;}
 .canvas-height {height:512px; }
-x3d { border:0px solid black; }
-:focus { border:2px solid green; }
-div {margin-top:1em;}
-#manifest_label_container { margin-top:1em ; 
-                            font-size:18pt; 
-                            text-align:center; }
-                            
-#manifest_summary_container { margin-top:1em ; 
-                              font-size:12pt; }
+x3d { border:2px solid gray; }
 
 
 
-#form {
-  display: flex;
-  flex-direction: column;
-  width: 840px;
-}
-
-#form select {
-  width: 100%;
-}
-
-.form-group {
-  display: flex;
-  margin: 5px 0;
-}
-
-#form input {
-  flex: 1;
-  margin-right: 5px;
-}
-
-#form textarea {
-  font-size : small;
+textarea {
+  font-size : 10pt;
   font-family : monospace;
-  flex: 1;
-  margin: 5px 0;
+  width:100%;
+  height:512px;
+}
+
+button {
+    font-size : 12pt;
+    color : black;
+    background-color:#EEE;
+    width : auto;
+    padding : 5px;
+}
+
+#example-manifests-list button {
+    background-color: transparent;
+    font-size : 12pt;
+    border : none;
+    text-decoration: underline ;
+    color : blue;
+    display : block ;
+}
+
+#example-manifests-list button:active {
+    background-color : #EEE ;
 }

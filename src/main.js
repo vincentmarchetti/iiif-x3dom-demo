@@ -1,21 +1,5 @@
 const manifesto = require("@iiif/3d-manifesto-dev/dist-commonjs/");
 
-//let iiifManifest;
-
-
-//const firstManifestUrl = document.querySelector("select#manifest-select").value;
-//document.querySelector("input#manifest-url").value = firstManifestUrl;
-//loadSceneFromUrl(firstManifestUrl);
-
-
-/*
-    in the context of this webpage, will 
-    1. retrieve the json document pointed to by manifestUrl
-    2. does the JSON parsing into an object
-    3. stringifies the resulting object back into pretty text and
-       puts that text into the text area
-    4. constructs and returns the Manifest object 
-*/
 
 /*
     returns an object satisfying the IManifestOptions inteface
