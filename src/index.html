@@ -13,22 +13,34 @@
   </head>
   <body>
 
-<div style="display:flex; width:100%">
+<section style="display:flex;  flex-flow: column; width:100%">
+<h3>IIIF Manifest 3D Viewer</h3>
 
-<div style="width:536px">
+<div style="display:flex; flex-flow:row"><!-- Start 2 column row -->
+
+<div style="display:flex; flex-flow:column; width:536px"><!--  Start X3DOM element column -->
 <div class="canvas-width canvas-height">
 <include src="x3d_scene.html"></include>
 </div>
-
-<div>
+<div  style="margin-top:1em; width:512px; padding-right:40px; flex-grow:0">
+<div style="display:flex; flex-flow:row">
+<div style="display:flex; flex-flow:column">
+    <div>
 	<input  type="checkbox"  id="show-axes-checkbox" />
-	<span style="margin-left:0em">Show Coordinate Axes</span>
+	<span style="margin-left:0em">Coordinate Axes</span>
 	</div>
 	
 	<div>
 	<input  type="checkbox"  id="headlight-on-checkbox" />
 	<span style="margin-left:0em">Headlight</span>
 	</div>
+</div>
+
+<div style="margin-left:auto">
+<button onclick='show_all()' >Show All</button>
+</div>
+</div>
+</div>	
 	<script>
 	function show_all()
     {
@@ -39,15 +51,14 @@
             console.error("x3delem not located")
     }
     </script>
-<button onclick='show_all()'>Show All</button>
-</div>
+</div><!--  End X3DOM element column -->
 
-<div style="flex-grow:1;">
-<div>
-    <div style="padding-right:20px;">
-    <textarea id="manifest-text" name="manifest-text" rows="35">
-    </textarea>
-    </div>
+<div style="display:flex; flex-flow:column; flex-grow:1;"><!--  Start manifest text column -->
+
+    
+    <textarea id="manifest-text" name="manifest-text"> </textarea>
+    
+    <div style="display:flex; flex-direction:row; margin-top:1em">
     
     <script>
     function load_from_url( manifestUrl){
@@ -56,23 +67,41 @@
     }
     </script>
     
-    <button id="load-manifest-from-text">Load Manifest From Text</button>
+    
     
     <div id="example-manifests-list">
     <div>Example Manifests</div>
     <div style="margin-left:10px">
     <button onclick='load_from_url("https://raw.githubusercontent.com/IIIF/3d/main/manifests/1_basic_model_in_scene/model_origin.json")'>
-    Astronaut</a>
+    Astronaut</button>
     <button onclick='load_from_url("https://raw.githubusercontent.com/IIIF/3d/main/manifests/9_commenting_annotations/whale_comment_camera.json")'>
-    Whale Cranium</a>
+    Whale Cranium</button>
     <button onclick='load_from_url("https://raw.githubusercontent.com/vincentmarchetti/iiif3dtsg/aftermarket-specials/manifests/aftermarket_specials/astronaut_glove.json")'>
     Astronaut's Left Glove Close-Up</button>
     </div>
     </div>
-</div>
-</div>
+    <div style="flex-direction:column; margin-left:auto">
+    <button id="load-manifest-from-text">Load Manifest into Viewer</button>
+    </div>
+    </div>
+</div><!--  End manifest text column -->
+</div><!--  End 2 column row -->
+
+<div style="flex-direction:row; margin-top:2em">
+<a href="https://web3d.org">
+<img alt="X3D Standard" src="X3dSpecificationLogo.png" style="height:40px">
+</a>
+
+<a href="https://x3dom.org">
+<img alt="X3DOM" src="x3dom_logo.png" style="height:32px">
+</a>
 </div>
 
+</section>
 <script type="module" src="listeners.js"></script>
 </body>
 </html>
+
+
+
+
