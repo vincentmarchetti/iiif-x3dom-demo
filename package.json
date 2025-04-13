@@ -7,6 +7,7 @@
   "scripts": {
     "start": "parcel --open",
     "build": "parcel build",
+    "build:aws" : "parcel build --dist-dir=dist-aws --public-url=/iiif3dtsg/viewer --no-source-maps src/index.html",
     "test": "mocha"
   },
   "dependencies": {
