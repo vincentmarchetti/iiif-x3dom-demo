@@ -14,14 +14,13 @@
   <body>
 
 <section style="display:flex;  flex-flow: column; width:100%">
-<h3>IIIF Manifest 3D Viewer</h3>
+<h3>IIIF 3D Manifest Viewer</h3>
 
 <div style="display:flex; flex-flow:row"><!-- Start 2 column row -->
 
 <div style="display:flex; flex-flow:column; width:536px"><!--  Start X3DOM element column -->
-<div class="canvas-width canvas-height">
 <include src="x3d_scene.html"></include>
-</div>
+
 <div  style="margin-top:1em; width:512px; padding-right:40px; flex-grow:0">
 <div style="display:flex; flex-flow:row">
 <div style="display:flex; flex-flow:column">
@@ -55,9 +54,21 @@
 
 <div style="display:flex; flex-flow:column; flex-grow:1;"><!--  Start manifest text column -->
 
+    <div class="canvas-height" style="display:flex; flex-direction:column">
     
-    <textarea id="manifest-text" name="manifest-text"> </textarea>
-    
+    <div style="display:flex; flex-direction:row; margin-bottom:0.5em">
+    <div style="font-size:smaller; width:50%; flex-grow:0">    
+    Type or paste manifest json text into text box; or load from one of example manifests below.<br>
+        
+    Load Manifest Into Viewer button will initialize scene from
+    text in textbox.<br>    
+    </div>
+    <div style="margin-top:auto; margin-left:auto">
+    <button id="load-manifest-from-text">Load Manifest into Viewer</button>
+    </div>
+    </div>
+    <textarea id="manifest-text" name="manifest-text" style="flex-grow:1"> </textarea>
+    </div>
     <div style="display:flex; flex-direction:row; margin-top:1em">
     
     <script>
@@ -80,14 +91,12 @@
     Astronaut's Left Glove Close-Up</button>
     </div>
     </div>
-    <div style="flex-direction:column; margin-left:auto">
-    <button id="load-manifest-from-text">Load Manifest into Viewer</button>
-    </div>
+
     </div>
 </div><!--  End manifest text column -->
 </div><!--  End 2 column row -->
 
-<div style="flex-direction:row; margin-top:2em">
+<div style="display:flex; flex-direction:row; margin-top:2em">
 <a href="https://web3d.org">
 <img alt="X3D Standard" src="X3dSpecificationLogo.png" style="height:40px">
 </a>
