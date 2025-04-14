@@ -7,6 +7,7 @@
     <script type='text/javascript' src='https://x3dom.org/release/x3dom-full.js'> </script>         
     <script type='module' src='manifest_viewer.js'> </script>
     <script type='module' src='main.js'> </script>
+    <script type='text/javascript' src='page_button_handlers.js'> </script>
 
     <link rel='stylesheet' type='text/css' href='https://x3dom.org/release/x3dom.css'></link> 
     <link href="styles.css" rel="stylesheet" />
@@ -40,16 +41,6 @@
 </div>
 </div>
 </div>	
-	<script>
-	function show_all()
-    {
-        var x3delem = document.getElementById('x3delem');
-        if (x3delem)
-            x3delem.runtime.showAll();
-        else
-            console.error("x3delem not located")
-    }
-    </script>
 </div><!--  End X3DOM element column -->
 
 <div style="display:flex; flex-flow:column; flex-grow:1;"><!--  Start manifest text column -->
@@ -58,10 +49,10 @@
     
     <div style="display:flex; flex-direction:row; margin-bottom:0.5em">
     <div style="font-size:smaller; width:50%; flex-grow:0">    
-    Type or paste manifest json text into text box; or load from one of example manifests below.<br>
+    Type or paste manifest json text into text box, or load from one of example manifests below.<br>
         
     Load Manifest Into Viewer button will initialize scene from
-    text in textbox.<br>    
+    text in text box.<br>    
     </div>
     <div style="margin-top:auto; margin-left:auto">
     <button id="load-manifest-from-text">Load Manifest into Viewer</button>
@@ -71,12 +62,6 @@
     </div>
     <div style="display:flex; flex-direction:row; margin-top:1em">
     
-    <script>
-    function load_from_url( manifestUrl){
-        var evt = new CustomEvent("load_text_from_url", {"detail":{"url" : manifestUrl}});
-        document.dispatchEvent( evt );
-    }
-    </script>
     
     
     
