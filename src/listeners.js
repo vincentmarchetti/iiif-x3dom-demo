@@ -1,4 +1,4 @@
-import { fetchManifestFromUrl , getManifestFromText } from "./main.js";
+import { fetchManifestFromUrl } from "./main.js";
 
 
 
