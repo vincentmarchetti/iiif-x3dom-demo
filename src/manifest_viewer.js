@@ -234,17 +234,12 @@ let initialize_viewer = function () {
 };
 
 window.addEventListener("load", (event) => {
-  //console.log("document load fired");
   _pre_init_state.document = true;
   if (_pre_init_state.x3dom && _pre_init_state.document) initialize_viewer();
 });
 
-window.addEventListener("load", (event) => {
-  console.log("test parsing of url");
-  var fragPattern=new RegExp("#\?" + "document=(.+)");
-  var res = fragPattern.exec(window.location.hash)
-  console.log("search result " + res[1] );
-});
+
+
 
 class SceneAnnotations {
   constructor(scene) {
