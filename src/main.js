@@ -43,14 +43,6 @@ export async function fetchManifestFromUrl(manifestUrl) {
 }
 
 
-export function getManifestFromText(manifestDoc) {
-    var manifestObj = JSON.parse( manifestDoc);
-    var options = getRequestedManifestOptions();
-    return new manifesto.Manifest(manifestObj, options)
-}
-
-
-
 
 
 
