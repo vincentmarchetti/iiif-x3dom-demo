@@ -15,22 +15,27 @@ function getRequestedManifestOptions(){
 
 export async function fetchManifestFromUrl(manifestUrl) {
   
-    var response = await fetch(manifestUrl);
-    if (response.ok){
-        var manifestDoc = await response.text();
+    
+    var urlObj = new URL(manifestUrl);
+    console.log('parsed manifestUrl protocol ', urlObj.protocol )
+    var manifestText;
+    
+
+    if (urlObj.protocol == "data:"){
+        console.log("handle data url");
+        manifestText=parseDataUri(manifestUrl);
     }
     else{
-        throw new Error("network fetch of manifest failed");
+        var response = await fetch( encodeURI(manifestUrl));
+        if (response.ok) manifestText = await response.text();
+        else throw new Error("network fetch of manifest failed");
     }
     
-    try{
-        var manifestObj = JSON.parse( manifestDoc);
-    }
-    catch(exc)
-    {
-        console.log("err " + exc);
-        console.log(manifestDoc);
-    }
+    
+    console.log("json result ", manifestText);
+    
+    var manifestObj = JSON.parse( manifestText);
+    
     var options = getRequestedManifestOptions();
     var retVal = new manifesto.Manifest(manifestObj, options)
     console.log("manifest parsed into Manifesto object");
@@ -42,7 +47,13 @@ export async function fetchManifestFromUrl(manifestUrl) {
     return retVal;
 }
 
-
+function parseDataUri( dataUri ){
+    const ix=dataUri.indexOf(",");
+    if (ix >= 0){
+        // TODO: insert identification of Mimetype , base64
+        return decodeURIComponent( dataUri.substring(ix+1));
+    }
+}
 
 
 
