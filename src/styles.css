@@ -1,20 +1,14 @@
 body {
   font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
+  margin: 0px;
   font-size:12pt; 
-      margin-top:1em; 
-      margin-left:1em;
-      margin-right:1em;
-      line-height:1.5em;
+  line-height:1.5em;
 }
 
 
 
-.canvas-width  {width:720px;}
-.canvas-height {height:720px; }
-x3d { border:2px solid gray; }
+
+x3d { width:100%; aspect-ratio: 1/1;}
 
 
 
@@ -31,17 +25,4 @@ button {
     background-color:#EEE;
     width : auto;
     padding : 5px;
-}
-
-#example-manifests-list button {
-    background-color: transparent;
-    font-size : 12pt;
-    border : none;
-    text-decoration: underline ;
-    color : blue;
-    display : block ;
-}
-
-#example-manifests-list button:active {
-    background-color : #EEE ;
 }
