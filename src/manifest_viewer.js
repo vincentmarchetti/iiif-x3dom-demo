@@ -372,7 +372,7 @@ class SceneAnnotations {
     let iiifLight = bodyObj.base;
 
 
-    if (iiifLight.isAmbientLight) {
+    if (false && iiifLight.isAmbientLight) {
       lightNode = document.createElement("pointlight");
       lightNode.setAttribute("intensity", "0.0");
       lightNode.setAttribute(
@@ -420,10 +420,10 @@ class SceneAnnotations {
                                         "undefined" );
       
     
-      if (iiifLight.isDirectionalLight) {
+      if (false && iiifLight.isDirectionalLight) {
         lightNode = document.createElement("directionallight");
       } 
-      else if ( iiifLight.isSpotLight ){
+      else if ( true || iiifLight.isSpotLight ){
         // spotlight has an angle and a location
         lightNode = document.createElement("spotlight");
         let angleInDegrees = MathUtils.degToRad(iiifLight.Angle );
