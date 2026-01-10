@@ -19,6 +19,6 @@
   ],
   "devDependencies": {
     "parcel": "^2",
-    "posthtml-include": "^2.0.1"
+    "posthtml-include": "^2"
   }
 }

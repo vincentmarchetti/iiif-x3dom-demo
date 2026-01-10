@@ -324,6 +324,7 @@ class SceneAnnotations {
     }
     catch(err){
         console.error("exception " + err);
+        throw err;
     }
   }
 
@@ -341,22 +342,24 @@ class SceneAnnotations {
     // x3dtransform will be list of X3D Transform nodes need to
     // perform the function of iiif transforms in the SpecificResource
     // of the body and the PointSelector of the target resources
-    var x3dtransforms = [];
-
-    if (bodyObj.wrapper?.isSpecificResource) {
-      var transforms = x3dtransforms.concat(bodyObj.wrapper.getTransform());
-      let x3dt = transforms.map(this.IIIFTransformToX3DTransform);
-      x3dtransforms = x3dtransforms.concat(x3dt);
+    let x3dtransforms;
+    
+    
+    try{
+        x3dtransforms =  (bodyObj.wrapper?.getTransform() != null)?
+                        bodyObj.wrapper.getTransform().map(this.IIIFTransformToX3DTransform):
+                        [];
+    } 
+    catch(err){
+       console.warn(`bodyObj.wrapper.getTransform().map : ${err}`);
+        x3dtransforms = [];
     }
 
-    if (
-      targetObj.wrapper?.isSpecificResource &&
-      targetObj.wrapper.Selector?.isPointSelector
-    ) {
-      var selector = targetObj.wrapper.Selector;
-      x3dtransforms = x3dtransforms.concat(
-        this.IIIFPointSelectorToX3dTransform(selector),
-      );
+
+    if ( targetObj.wrapper?.Selector?.isPointSelector ){
+      x3dtransforms.push( 
+        this.IIIFPointSelectorToX3dTransform(
+            targetObj.wrapper.Selector));
     }
 
     if (x3dtransforms.length > 0) {
@@ -387,9 +390,18 @@ class SceneAnnotations {
       // and a direction
       
       // position
-      let lightLocation = targetObj.wrapper?.Selector?.isPointSelector
-      ? targetObj.wrapper.Selector.Location
-      : new Vector3(0.0, 0.0, 0.0);
+      let lightLocation = ( () => {
+        let retVal = new Vector3(0,0,0);
+        if ( targetObj.wrapper?.Selector?.isPointSelector ){
+            retVal.add( targetObj.wrapper.Selector.Location );
+        }
+        if (bodyObj.wrapper?.getTransform()){
+          const transforms = bodyObj.wrapper.getTransform();
+          const transVector = mathx3d.vectorFromTransformArray(transforms);
+          retVal.add( transVector);  
+        } 
+        return retVal;   
+      })();
       
       // a function which returns a direction vector if the body is a 
       // SpecificResource with RotateTransforms, otherwise returns a
@@ -399,8 +411,8 @@ class SceneAnnotations {
           let transform = bodyObj.wrapper.getTransform();
           if (transform) {
             // assume transform is entirely RotateTransform instances
-            let quat = mathx3d.quaternionFromRotateTransformArray(transform);
-            return new Vector3(0.0, 0.0, -1.0).applyQuaternion(quat); 
+            let quat = mathx3d.quaternionFromTransformArray(transform);
+            return new Vector3(0.0, -1.0, 0.0).applyQuaternion(quat); 
           }
         }
         return undefined;
@@ -485,7 +497,7 @@ class SceneAnnotations {
             let transform = bodyObj.wrapper.getTransform();
             if (transform) {
                 // assume transform is entirely RotateTransform instances
-                return mathx3d.quaternionFromRotateTransformArray(transform);
+                return mathx3d.quaternionFromTransformArray(transform);
             }            
          }
          return undefined;

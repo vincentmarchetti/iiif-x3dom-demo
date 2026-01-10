@@ -46,18 +46,38 @@ the interpretation of arrays of RotateTranforms:
 element 0 is applied to a Vector
 then element 1 is applied to the result... 
 */
-quaternionFromRotateTransformArray( transformArray ){
+quaternionFromTransformArray( transformArray ){
     let accum = new Quaternion();
     transformArray.forEach( ( transform ) => {
-        if (!transform.isRotateTransform )
-            throw new Error("invalid transform to quaternionFromRotateTransformArray");
-        let nquat = mathx3d.quaternionFromRotateTransform( transform );
-        //console.log("this " + Object.keys(this));
-        accum.premultiply( nquat );
+        if (transform.isRotateTransform ){
+            const nquat = mathx3d.quaternionFromRotateTransform( transform );
+            accum.premultiply( nquat );
+        }
+        else if ( transform.isScaleTransform ){
+            console.warn("unexpected ScaleTransform in camera or light annotation");
+        }
+        // developer Note: TranslateTransform instances can be ignored in this calculation
     });
     return accum;
 },
 
+vectorFromTransformArray( transformArray ){
+    let accum = new Vector3(0,0,0);
+    transformArray.forEach( (transform ) => {
+        if (transform.isRotateTransform){
+            const nquat = mathx3d.quaternionFromRotateTransform( transform );
+            accum.applyQuaternion( nquat );
+        }
+        else if ( transform.isScaleTransform ){
+            console.warn("unexpected ScaleTransform in camera or light annotation");
+        }
+        else if (transform.isTranslateTransform ){
+            const coord = transform.getTranslation();
+            accum.add( new Vector3( coord.x, coord.y, coord.z));
+        }
+    });
+    return accum;
+},
 /*
 returns 2, array of a Vector3 axis and angle of rotation in radians
 */
