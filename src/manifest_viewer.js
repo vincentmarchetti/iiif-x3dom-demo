@@ -476,10 +476,19 @@ class SceneAnnotations {
 
     let camera = bodyObj.base; // just convenient alias
 
-    // cameraPosition set to a Vector3 instance
-    let cameraPosition = targetObj.wrapper?.Selector?.isPointSelector
-      ? targetObj.wrapper.Selector.Location
-      : new Vector3(0.0, 0.0, 0.0);
+    // cameraPosition set to a Vector3 instance    
+    let cameraPosition = ( () => {
+        let retVal = new Vector3(0,0,0);
+        if ( targetObj.wrapper?.Selector?.isPointSelector ){
+            retVal.add( targetObj.wrapper.Selector.Location );
+        }
+        if (bodyObj.wrapper?.getTransform()){
+          const transforms = bodyObj.wrapper.getTransform();
+          const transVector = mathx3d.vectorFromTransformArray(transforms);
+          retVal.add( transVector);  
+        } 
+        return retVal;   
+      })();
     /* determine a camera orientation from two possible ways
      * first, the existence of a non-empty transform array in the
      * specific resource
